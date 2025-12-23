@@ -1,207 +1,170 @@
 ﻿using Npgsql;
 using System.Diagnostics;
-using System.Text.RegularExpressions;
+using System.Net;
+using System.Net.Sockets;
 using Microsoft.Extensions.Configuration;
 
 Console.WriteLine("🚀 FlowPress Worker starting...");
 
-// ===============================
-// CONFIGURACIÓN
-// ===============================
-
-var configuration = new ConfigurationBuilder()
-    .SetBasePath(Directory.GetCurrentDirectory())
-    .AddJsonFile("appsettings.json", optional: false)
+// ROLO Explicar funcionamiento del worker
+var config = new ConfigurationBuilder()
+    .SetBasePath(AppContext.BaseDirectory)
+    .AddJsonFile("appsettings.json", false)
     .Build();
 
-var connectionString = configuration.GetConnectionString("DefaultConnection");
+var connString = config.GetConnectionString("SupabaseDb")
+    ?? throw new Exception("SupabaseDb connection string missing");
 
-var sshUser = configuration["Docker:SshUser"];
-var sshHost = configuration["Docker:SshHost"];
-
-
-// Carpeta base donde se despliegan las instancias
-var instancesRoot = configuration["Docker:InstancesPath"]; // cambia en Windows si hace falta
+var instancesRoot = config["FlowPress:InstancesPath"]!;
+var nginxAvail = config["FlowPress:NginxSitesAvailable"]!;
+var nginxEnabled = config["FlowPress:NginxSitesEnabled"]!;
+var basePort = int.Parse(config["FlowPress:BasePort"]!);
 
 Directory.CreateDirectory(instancesRoot);
-
-// ===============================
-// LOOP PRINCIPAL
-// ===============================
 
 while (true)
 {
     try
     {
-        await using var conn = new NpgsqlConnection(connectionString);
-        await conn.OpenAsync();
+        using var conn = new NpgsqlConnection(connString);
+        conn.Open();
 
-        // 1️⃣ Buscar una instancia pendiente
-        var selectCmd = new NpgsqlCommand(@"
-            select id, dockerscript
+        using var cmd = new NpgsqlCommand(@"
+            select id, siteaddress, dockerscript, status
             from ""Instances""
-            where status = 'pending'
+            where status in ('pending','deleting')
             order by created_at
             limit 1
             for update skip locked
         ", conn);
 
-        await using var reader = await selectCmd.ExecuteReaderAsync();
-        if (!await reader.ReadAsync())
+        using var reader = cmd.ExecuteReader();
+        if (!reader.Read())
         {
-            await Task.Delay(5000);
+            Thread.Sleep(5000);
             continue;
         }
 
-        var instanceId = reader.GetGuid(0);
-        var dockerScript = reader.GetString(1);
-
+        var id = reader.GetGuid(0);
+        var domain = reader.GetString(1);
+        var script = reader.GetString(2);
+        var status = reader.GetString(3);
         reader.Close();
 
-        Console.WriteLine($"📦 Deploying instance {instanceId}");
-
-        // 2️⃣ Marcar como deploying
-        await UpdateStatus(conn, instanceId, "deploying");
-
-        // 3️⃣ Crear carpeta de la instancia
-        var instanceDir = Path.Combine(instancesRoot, instanceId.ToString());
-        Directory.CreateDirectory(instanceDir);
-
-        // 4️⃣ Escribir docker-compose.yml
-        var composePath = Path.Combine(instanceDir, "docker-compose.yml");
-        await File.WriteAllTextAsync(composePath, dockerScript);
-
-        // 5️⃣ Ejecutar docker compose
-        var remoteDir = $"{instancesRoot}/{instanceId}";
-
-        // Crear carpeta remota
-        RunProcess(
-            "ssh",
-            $"{sshUser}@{sshHost} \"mkdir -p {remoteDir}\""
-        );
-
-        // Copiar docker-compose.yml
-        CopyComposeToRemote(
-            composePath,
-            sshUser,
-            sshHost,
-            remoteDir
-        );
-
-        // Ejecutar docker compose remoto
-        RunRemoteDocker(
-            sshUser,
-            sshHost,
-            remoteDir
-        );
-        
-        // 6️⃣ Limpiar contraseña del script
-        var cleanedScript = Regex.Replace(
-            dockerScript,
-            @"MYSQL_PASSWORD:.*|WORDPRESS_DB_PASSWORD:.*",
-            "# PASSWORD REMOVED",
-            RegexOptions.IgnoreCase
-        );
-
-        // 7️⃣ Actualizar DB (running + script limpio)
-        var updateCmd = new NpgsqlCommand(@"
-            update ""Instances""
-            set status = 'running',
-                dockerscript = @script,
-                deployed_at = now()
-            where id = @id
-        ", conn);
-
-        updateCmd.Parameters.AddWithValue("script", cleanedScript);
-        updateCmd.Parameters.AddWithValue("id", instanceId);
-
-        await updateCmd.ExecuteNonQueryAsync();
-
-        Console.WriteLine($"✅ Instance {instanceId} deployed");
+        if (status == "pending")
+            Deploy(conn, id, domain, script);
+        else
+            Remove(conn, id, domain);
     }
     catch (Exception ex)
     {
-        Console.WriteLine($"❌ ERROR: {ex.Message}");
-        await Task.Delay(5000);
+        Console.WriteLine($"ERROR: {ex.Message}");
+        Thread.Sleep(5000);
     }
 }
 
-// ===============================
-// MÉTODOS AUXILIARES
-// ===============================
+#region Metodos
 
-static async Task UpdateStatus(NpgsqlConnection conn, Guid id, string status)
+// ROLO Explicar funcionamiento de los metodos
+void Deploy(NpgsqlConnection conn, Guid id, string domain, string script)
 {
-    var cmd = new NpgsqlCommand(
-        @"update ""Instances"" set status = @status where id = @id",
-        conn
-    );
-    cmd.Parameters.AddWithValue("status", status);
-    cmd.Parameters.AddWithValue("id", id);
-    await cmd.ExecuteNonQueryAsync();
+    Console.WriteLine($"Deploying {domain}");
+
+    var port = FindFreePort(basePort);
+    var dir = Path.Combine(instancesRoot, id.ToString());
+    Directory.CreateDirectory(dir);
+
+    script = script.Replace("{{PORT}}", port.ToString());
+    File.WriteAllText(Path.Combine(dir, "docker-compose.yml"), script);
+
+    Run("docker compose up -d", dir);
+    CreateNginx(domain, port);
+
+    Run("sudo nginx -t && sudo systemctl reload nginx");
+    UpdateStatus(conn, id, "running");
+
+    Console.WriteLine($"{domain} running on port {port}");
 }
 
-// static void RunDockerCompose(string workingDir)
-// {
-//     var psi = new ProcessStartInfo
-//     {
-//         FileName = "ssh",
-//         Arguments = $"{Environment.GetEnvironmentVariable("SSH_USER")}@{Environment.GetEnvironmentVariable("SSH_HOST")} \"cd {workingDir} && docker compose up -d\"",
-//         RedirectStandardOutput = true,
-//         RedirectStandardError = true,
-//         UseShellExecute = false,
-//         CreateNoWindow = true
-//     };
-//
-//     using var process = new Process { StartInfo = psi };
-//     process.Start();
-//     process.WaitForExit();
-//
-//     var output = process.StandardOutput.ReadToEnd();
-//     var error = process.StandardError.ReadToEnd();
-//
-//     if (process.ExitCode != 0)
-//     {
-//         throw new Exception($"Docker Compose failed: {error}");
-//     }
-// }
-
-static void CopyComposeToRemote(
-    string localComposePath,
-    string sshUser,
-    string sshHost,
-    string remoteDir
-)
+void Remove(NpgsqlConnection conn, Guid id, string domain)
 {
-    RunProcess(
-        "scp",
-        $"{localComposePath} {sshUser}@{sshHost}:{remoteDir}/docker-compose.yml"
-    );
+    Console.WriteLine($"🗑 Removing {domain}");
+
+    var dir = Path.Combine(instancesRoot, id.ToString());
+    if (Directory.Exists(dir))
+        Run("docker compose down -v", dir);
+
+    DeleteNginx(domain);
+    Run("nginx -t && systemctl reload nginx");
+
+    UpdateStatus(conn, id, "deleted");
 }
 
-static void RunRemoteDocker(
-    string sshUser,
-    string sshHost,
-    string remoteDir
-)
+void CreateNginx(string domain, int port)
 {
-    RunProcess(
-        "ssh",
-        $"{sshUser}@{sshHost} \"cd {remoteDir} && docker compose up -d\""
-    );
+    var conf = $@"
+server {{
+    listen 80;
+    server_name {domain};
+
+    location / {{
+        proxy_pass http://127.0.0.1:{port};
+        proxy_set_header Host $host;
+        proxy_set_header X-Forwarded-For $remote_addr;
+    }}
+}}";
+
+    var path = Path.Combine(nginxAvail, $"{domain}.conf");
+    File.WriteAllText(path, conf);
+
+    var link = Path.Combine(nginxEnabled, $"{domain}.conf");
+    if (!File.Exists(link))
+        Run($"ln -s {path} {link}");
 }
 
-static void RunProcess(string file, string args)
+void DeleteNginx(string domain)
+{
+    File.Delete(Path.Combine(nginxEnabled, $"{domain}.conf"));
+    File.Delete(Path.Combine(nginxAvail, $"{domain}.conf"));
+}
+
+int FindFreePort(int start)
+{
+    var port = start;
+    while (true)
+    {
+        try
+        {
+            var l = new TcpListener(IPAddress.Loopback, port);
+            l.Start();
+            l.Stop();
+            return port;
+        }
+        catch { port++; }
+    }
+}
+
+void UpdateStatus(NpgsqlConnection conn, Guid id, string status)
+{
+    using var cmd = new NpgsqlCommand(
+        @"update ""Instances"" set status=@s where id=@i", conn);
+    cmd.Parameters.AddWithValue("s", status);
+    cmd.Parameters.AddWithValue("i", id);
+    cmd.ExecuteNonQuery();
+}
+
+#endregion
+
+void Run(string cmd, string? cwd = null)
 {
     var p = new Process
     {
         StartInfo = new ProcessStartInfo
         {
-            FileName = file,
-            Arguments = args,
-            RedirectStandardOutput = true,
-            RedirectStandardError = true,
-            UseShellExecute = false
+            FileName = "bash",
+            Arguments = $"-c \"{cmd}\"",
+            WorkingDirectory = cwd ?? "/",
+            RedirectStandardError = true
         }
     };
 
@@ -209,6 +172,5 @@ static void RunProcess(string file, string args)
     p.WaitForExit();
 
     if (p.ExitCode != 0)
-        throw new Exception($"{file} failed");
+        throw new Exception(p.StandardError.ReadToEnd());
 }
-
