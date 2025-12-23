@@ -1,0 +1,114 @@
+🧩 Uptime Kuma: qué puedes aprovechar
+
+    Uptime Kuma tiene una API HTTP (REST) que expone el estado de tus monitores, entre otras cosas.
+    Con esa API puedes consultar:
+    - Estado (UP/DOWN)
+    - Último tiempo de chequeo
+    - Latencia
+    - Nombre del monitor
+    - Tiempo total activo, etc.
+
+✅ Opción 1: Consultar directamente la API REST de Kuma
+
+    Uptime Kuma expone endpoints como estos (según configuración):
+    - https://tuservidor:3001/api/metrics
+    - https://tuservidor:3001/api/status-page/slug
+    
+    Pero el más útil para monitoreo en apps personalizadas es el API de monitores privados (requiere autenticación con token JWT o cookie).
+    Por ejemplo, si usas autenticación, puedes hacer login por API y obtener el estado de todos tus monitores:
+    
+    - Ejemplo en C# (.NET)
+        using System.Net.Http.Json;
+        using System.Text.Json;
+        
+        public class KumaMonitor
+        {
+            public int id { get; set; }
+            public string name { get; set; }
+            public string status { get; set; } // 1 = UP, 0 = DOWN
+            public string url { get; set; }
+        }
+        
+        public class KumaService
+        {
+            private readonly HttpClient _http;
+        
+            public KumaService(string baseUrl)
+            {
+                _http = new HttpClient { BaseAddress = new Uri(baseUrl) };
+            }
+        
+            public async Task<List<KumaMonitor>> GetMonitorsAsync(string username, string password)
+            {
+                // 1️⃣ Login en Uptime Kuma
+                var login = new { username, password };
+                var response = await _http.PostAsJsonAsync("/api/login", login);
+                response.EnsureSuccessStatusCode();
+        
+                // Guarda cookie de sesión
+                var cookies = response.Headers.GetValues("Set-Cookie").First();
+                _http.DefaultRequestHeaders.Add("Cookie", cookies);
+        
+                // 2️⃣ Obtiene los monitores
+                var monitorsResponse = await _http.GetAsync("/api/monitor");
+                monitorsResponse.EnsureSuccessStatusCode();
+        
+                var json = await monitorsResponse.Content.ReadAsStringAsync();
+                var doc = JsonDocument.Parse(json);
+        
+                // 3️⃣ Parsear lista de monitores
+                var list = new List<KumaMonitor>();
+                foreach (var monitor in doc.RootElement.GetProperty("data").EnumerateArray())
+                {
+                    list.Add(new KumaMonitor
+                    {
+                        id = monitor.GetProperty("id").GetInt32(),
+                        name = monitor.GetProperty("name").GetString(),
+                        url = monitor.GetProperty("url").GetString(),
+                        status = monitor.GetProperty("status").GetInt32() == 1 ? "UP" : "DOWN"
+                    });
+                }
+        
+                return list;
+            }
+        }
+    
+    - Uso:
+        var kuma = new KumaService("https://tuservidor:3001");
+        var monitores = await kuma.GetMonitorsAsync("admin", "tu_password");
+        
+        foreach (var m in monitores)
+        {
+            Console.WriteLine($"{m.name}: {m.status}");
+        }
+
+✅ Opción 2: Usar un status page público
+
+    Si tienes configurada una página pública de estado en Kuma, puedes consumirla fácilmente sin login:
+    Por ejemplo:
+        - https://tuservidor/status-page/mi-pagina
+    
+        Este endpoint también tiene una versión JSON:
+        - https://tuservidor/api/status-page/mi-pagina    
+    
+    - Ejemplo simple en C#:
+        var client = new HttpClient();
+        var json = await client.GetStringAsync("https://tuservidor/api/status-page/mi-pagina");
+        Console.WriteLine(json);
+    
+    Y puedes deserializarlo con System.Text.Json o Newtonsoft.Json.
+
+✅ Opción 3: Integrar Kuma → tu app (push)
+
+    Si quieres que Kuma notifique a tu app C# (en lugar de tu app preguntar),
+    puedes usar un webhook en las notificaciones de Uptime Kuma.
+    
+    Tu app tendría un endpoint HTTP (por ejemplo /api/kuma-status),
+    y Kuma puede hacer un POST allí cuando el estado cambie.
+    Así recibes los cambios en tiempo real.
+    
+🧠 Recomendación
+    
+    Si tu app C# solo necesita leer el estado, usa Opción 2 (status público) o Opción 1 (API privada).
+    Si quieres sincronización en tiempo real o alertas, usa Opción 3 (webhook).
+    ¿Quieres que te muestre un ejemplo de cómo integrar Uptime Kuma con tu app ASP.NET Core para que te lleguen automáticamente los cambios de estado (push webhook)?

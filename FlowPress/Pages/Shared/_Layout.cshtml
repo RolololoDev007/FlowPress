@@ -1,0 +1,28 @@
+﻿@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <link rel="icon" type="image/png" href="~/images/icono.png" />
+    <title>@ViewData["Title"] - FlowPress</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="~/css/site.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+</head>
+<body class="flex min-h-screen bg-gray-50 dark:bg-[#111418] text-gray-900 dark:text-white">
+
+<!-- Barra lateral -->
+@await Html.PartialAsync("_NavMenu")
+
+<!-- Contenido principal -->
+<main class="flex-1 ml-64 overflow-auto">
+    @RenderBody()
+</main>
+
+@RenderSection("Scripts", required: false)
+</body>
+</html>

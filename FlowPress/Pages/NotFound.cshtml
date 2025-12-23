@@ -1,0 +1,40 @@
+@page "/error"
+@model FlowPress.Pages.NotFound
+
+@{
+    ViewData["Title"] = "Not Found";
+    Layout = "_Layout";
+}
+
+@if (User.Identity?.IsAuthenticated ?? false)
+{
+    <!-- Página tipo 404 -->
+    <div class="flex min-h-screen">
+        <main class="flex-1 flex flex-col items-center justify-center bg-[#f9fafb] dark:bg-[#0d0f12] p-6">
+            <h1 class="text-6xl font-extrabold text-gray-900 dark:text-white mb-4">404</h1>
+            <h2 class="text-2xl font-semibold text-gray-800 dark:text-gray-200 mb-6">
+                We were unable to find what you were looking for
+            </h2>
+            <a href="/"
+               class="px-6 py-3 rounded-lg bg-blue-600 text-white text-base font-semibold hover:bg-blue-700 focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                Home
+            </a>
+        </main>
+    </div>
+}
+else
+{
+    <!-- Página tipo 404 -->
+    <div class="flex min-h-screen">
+        <main class="flex-1 flex flex-col items-center justify-center bg-[#f9fafb] dark:bg-[#0d0f12] p-6">
+            <h1 class="text-6xl font-extrabold text-gray-900 dark:text-white mb-4">404</h1>
+            <h2 class="text-2xl font-semibold text-gray-800 dark:text-gray-200 mb-6">
+                We were unable to find what you were looking for.
+            </h2>
+            <a href="/login"
+               class="px-6 py-3 rounded-lg bg-blue-600 text-white text-base font-semibold hover:bg-blue-700 focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                Login
+            </a>
+        </main>
+    </div>
+}

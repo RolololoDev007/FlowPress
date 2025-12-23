@@ -1,0 +1,113 @@
+﻿@{
+    string? username = User.FindFirst("username")?.Value ?? "Usuario";
+    string? userEmail = User.Identity?.Name ?? "Unknown";
+}
+
+<div class="flex min-h-screen">
+    @* En esta condición comprobaremos que se haya hecho 
+       login para mostrar la NavBar con  diferentes botones *@
+    @if (User.Identity?.IsAuthenticated ?? false)
+    {
+        <!-- NavMenu para usuario AUTENTICADO -->
+        <aside class="flex-col w-64 bg-white dark:bg-[#111418] border-r border-gray-200 dark:border-gray-800 hidden lg:flex fixed h-screen">
+            <div class="flex h-full flex-col justify-between p-4">
+                <div class="flex flex-col gap-4">
+                    <!-- Logo -->
+                    <div class="flex items-center gap-2">
+                        <img src="~/images/logo.png" alt="Logo"/>
+                    </div>
+
+                    <!-- Perfil de usuario -->
+                    <div class="flex items-center gap-3 px-2">
+                        <div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10"
+                             style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuB3E37q3Tn_NYWA0fNMKLfhNtZgKB7pz9rkMMu5xwvaPgTeD1JQF_en6TOjlEynvKTFMcwKHO9rUamSg1RJKj3qbNPGlMNCjX4d_I4eKhOm1qtZ4EFpOGGknC0PMEJWO2fvljDxRADYX90nETgFIxHzl5YJxMdd_4KdboMUZNFDc4Cg5NgCLqlJDzZjdYTqTw4kFa5g6Ka1CeNyorQ1CKib5v2Gy7VsIItFCDvjAwWyWaBwoNrO-lQy14raAjH2dutNCWrdXlZ3ZvWR");'>
+                        </div>
+                        <div class="flex flex-col">
+                            <h1 class="text-gray-900 dark:text-white text-base font-medium leading-normal">@username</h1>
+                            <p class="text-gray-500 dark:text-[#9dabb9] text-sm font-normal leading-normal">@userEmail</p>
+                        </div>
+                    </div>
+
+                    <!-- Navegación -->
+                    <nav class="flex flex-col gap-2 mt-4">
+                        <a class="flex items-center gap-3 px-3 py-2 rounded-lg text-gray-500 dark:text-white 
+                                   hover:bg-gray-100 dark:hover:bg-[#283039]"
+                           href="/">
+                            <span class="material-symbols-outlined">home</span>
+                            <p class="text-sm font-medium leading-normal">Home</p>
+                        </a>
+                        @* ROLO Elegir una de las dos opciones *@
+                        <a class="flex items-center gap-3 px-3 py-2 rounded-lg text-gray-500 dark:text-white 
+                                   hover:bg-gray-100 dark:hover:bg-[#283039]"
+                           href="/instances">
+                            <span class="material-symbols-outlined">stacks</span>
+                            <p class="text-sm font-medium leading-normal">Instances</p>
+                        </a>
+                        <a class="flex items-center gap-3 px-3 py-2 rounded-lg text-gray-500 dark:text-white 
+                                   hover:bg-gray-100 dark:hover:bg-[#283039]"
+                           href="/instances">
+                            <span class="material-symbols-outlined">desktop_cloud_stack</span>
+                            <p class="text-sm font-medium leading-normal">Instances</p>
+                        </a>
+                        <a class="flex items-center gap-3 px-3 py-2 rounded-lg text-gray-500 dark:text-white
+                           hover:bg-gray-100 dark:hover:bg-[#283039]"
+                           href="/create">
+                             <span class="material-symbols-outlined">publish</span>
+                             <p class="text-sm font-medium leading-normal">Deploy New Instance</p>
+                        </a>
+                    </nav>
+                </div>
+
+                <!-- Botones inferiores -->
+                <div class="flex flex-col gap-2 mt-4">
+                    <!-- Log out -->
+                    <form asp-page="/Authentication/Logout" method="post">
+                        <button class="flex items-center gap-3 px-3 py-2 rounded-lg text-gray-500 dark:text-white 
+                                   hover:bg-gray-100 dark:hover:bg-[#283039]"
+                                type="submit">
+                            <span class="material-symbols-outlined">logout</span>
+                            <p class="text-sm font-medium leading-normal">Sign Out</p>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </aside>
+    }
+    else
+    {
+        <!-- NavMenu para usuario NO AUTENTICADO -->
+        <aside class="flex-col w-64 bg-white dark:bg-[#111418] border-r border-gray-200 dark:border-gray-800 hidden lg:flex fixed h-screen">
+            <div class="flex h-full flex-col justify-between p-4">
+                <div class="flex flex-col gap-4">
+                    <!-- Logo -->
+                    <div class="flex items-center gap-3 px-2">
+                        <div class="flex items-center gap-2">
+                            <img src="~/images/logo.png" alt="Logo"/>
+                        </div>
+                    </div>
+
+                    <!-- Navegación pública -->
+                    <nav class="flex flex-col gap-2 mt-4">
+                        <a class="flex items-center gap-3 px-3 py-2 rounded-lg text-gray-500 dark:text-white 
+                                   hover:bg-gray-100 dark:hover:bg-[#283039]" href="/">
+                            <span class="material-symbols-outlined">home</span>
+                            <p class="text-sm font-medium leading-normal">Home</p>
+                        </a>
+
+                        <a class="flex items-center gap-3 px-3 py-2 rounded-lg text-gray-500 dark:text-white 
+                                   hover:bg-gray-100 dark:hover:bg-[#283039]" href="/login">
+                            <span class="material-symbols-outlined">login</span>
+                            <p class="text-sm font-medium leading-normal">Login</p>
+                        </a>
+
+                        <a class="flex items-center gap-3 px-3 py-2 rounded-lg text-gray-500 dark:text-white 
+                                   hover:bg-gray-100 dark:hover:bg-[#283039]" href="/register">
+                            <span class="material-symbols-outlined">person_add</span>
+                            <p class="text-sm font-medium leading-normal">Register</p>
+                        </a>
+                    </nav>
+                </div>
+            </div>
+        </aside>
+    }
+</div>

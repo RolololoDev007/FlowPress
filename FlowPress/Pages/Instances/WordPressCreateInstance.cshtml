@@ -1,0 +1,172 @@
+@page "/create"
+@model WordPressCreateInstance
+
+@{
+    ViewData["Title"] = "Create Instance";
+    Layout = "_Layout";
+}
+
+@section Scripts {
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const toggleBtn = document.querySelector("#togglePassword");
+            const passwordInput = document.querySelector("#AdminPassword");
+            const icon = toggleBtn.querySelector("span");
+
+            toggleBtn.addEventListener("click", function () {
+                const type = passwordInput.getAttribute("type") === "password" ? "text" : "password";
+                passwordInput.setAttribute("type", type);
+
+                // Cambiar icono según estado
+                icon.textContent = type === "password" ? "visibility" : "visibility_off";
+            });
+        });
+        document.addEventListener("DOMContentLoaded", function () {
+            const passwordInput = document.querySelector("#AdminPassword");
+            const strengthBar = document.querySelector("#passwordStrengthBar");
+            const strengthText = document.querySelector("#passwordStrengthText");
+
+            passwordInput.addEventListener("input", function () {
+                const value = passwordInput.value;
+                let strength = 0;
+
+                // Criterios básicos de fuerza
+                if (value.length >= 12) strength += 1;          // Largo necesario
+                if (/[A-Z]/.test(value)) strength += 1;         // Letra mayúscula
+                if (/[a-z]/.test(value)) strength += 1;         // Letra minúscula
+                if (/[0-9]/.test(value)) strength += 1;         // Número
+                if (/[^A-Za-z0-9]/.test(value)) strength += 1;  // Carácter especial
+
+                // Actualizar barra
+                const percentage = (strength / 5) * 100;
+                strengthBar.style.width = percentage + "%";
+
+                // Cambiar color y texto
+                if (strength <= 2) {
+                    strengthBar.className = "h-1.5 rounded-full bg-red-500";
+                    strengthText.textContent = "Weak";
+                    strengthText.className = "text-sm font-medium text-red-500";
+                } else if (strength === 3 || strength === 4) {
+                    strengthBar.className = "h-1.5 rounded-full bg-yellow-500";
+                    strengthText.textContent = "Medium";
+                    strengthText.className = "text-sm font-medium text-yellow-500";
+                } else if (strength === 5) {
+                    strengthBar.className = "h-1.5 rounded-full bg-green-500";
+                    strengthText.textContent = "Strong";
+                    strengthText.className = "text-sm font-medium text-green-500";
+                }
+            });
+        });
+    </script>
+}
+
+<!-- Main Content -->
+<main class="flex-1 flex flex-col w-full">
+    <div class="flex-1 p-4 sm:p-6 lg:p-10">
+        <div class="max-w-4xl mx-auto">
+            <!-- Breadcrumbs -->
+            <div class="flex flex-wrap gap-2 mb-6">
+                <a class="text-gray-500 dark:text-[#9dabb9] text-sm sm:text-base font-medium leading-normal hover:text-primary dark:hover:text-primary"
+                   href="/instances">Instances</a>
+                <span class="text-gray-500 dark:text-[#9dabb9] text-sm sm:text-base font-medium leading-normal">/</span>
+                <span class="text-gray-800 dark:text-white text-sm sm:text-base font-medium leading-normal">Launch New Site</span>
+            </div>
+
+            <!-- Page Heading -->
+            <div class="mb-8">
+                <h1 class="text-gray-900 dark:text-white text-3xl sm:text-4xl font-black leading-tight tracking-[-0.033em]">
+                    Launch a New WordPress Instance
+                </h1>
+                <p class="text-gray-500 dark:text-[#9dabb9] text-base font-normal leading-normal mt-2">
+                    Fill in the details below to get your new site up and running.
+                </p>
+            </div>
+
+            <!-- Form Container -->
+            <div class="bg-white dark:bg-[#111418] rounded-xl border border-gray-200 dark:border-gray-800 p-6 sm:p-8">
+                <form method="post" class="space-y-6">
+                    <!-- Site Name -->
+                    <label class="flex flex-col">
+                        <p class="pb-2 text-sm font-medium">Site Name</p>
+                        <input asp-for="InstancesModel.SiteName"
+                               class="form-input h-12 w-full rounded-lg border border-border-light bg-background-light p-3 text-sm placeholder:text-subtle-light
+                      focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary
+                      dark:border-border-dark dark:bg-background-dark dark:text-white dark:placeholder:text-subtle-dark"
+                               placeholder="My Awesome Blog"
+                               type="text"/>
+                        <span asp-validation-for="InstancesModel.SiteName" class="text-red-600 text-sm mt-1"></span>
+                    </label>
+
+                    <!-- Site Address -->
+                    <label class="flex flex-col">
+                        <p class="pb-2 text-sm font-medium">Site Address</p>
+                        <div class="group flex w-full items-stretch rounded-lg">
+                            <input asp-for="InstancesModel.SiteAddress"
+                                   class="form-input h-12 flex-1 resize-none overflow-hidden rounded-l-lg border border-border-light bg-background-light p-3 text-sm placeholder:text-subtle-light focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary dark:border-border-dark dark:bg-background-dark dark:text-white dark:placeholder:text-subtle-dark"
+                                   placeholder="Enter your site address"/>
+                            <div
+                                class="flex items-center justify-center rounded-r-lg border border-l-0 border-border-light bg-background-light px-3 text-subtle-light group-focus-within:border-primary group-focus-within:text-primary dark:border-border-dark dark:bg-background-dark dark:text-subtle-dark">
+                                <span style="font-size: 16px;">flowpress.site</span>
+                            </div>
+                        </div>
+                        <span asp-validation-for="InstancesModel.SiteAddress" class="text-red-600 text-sm mt-1"></span>
+                        <p class="text-sm text-green-600 dark:text-green-500 mt-2 flex items-center gap-1.5">
+                            <span class="material-symbols-outlined text-base">check_circle</span> 
+                            Subdomain is available!
+                        </p>
+                    </label>
+
+                    <!-- WordPress Admin Username -->
+                    <label class="flex flex-col">
+                        <p class="pb-2 text-sm font-medium">WordPress Database Admin Username</p>
+                        <input asp-for="InstancesModel.WordpressUser"
+                               class="form-input h-12 w-full rounded-lg border border-border-light bg-background-light p-3 text-sm placeholder:text-subtle-light
+                      focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary
+                      dark:border-border-dark dark:bg-background-dark dark:text-white dark:placeholder:text-subtle-dark"
+                               placeholder="admin"
+                               type="text"/>
+                        <span asp-validation-for="InstancesModel.WordpressUser"
+                              class="text-red-600 text-sm mt-1"></span>
+                    </label>
+
+                    <!-- WordPress Admin Password -->
+                    <div>
+                        <label class="flex flex-col">
+                            <p class="pb-2 text-sm font-medium">WordPress Database Admin Password</p>
+                            <div class="relative">
+                                <input asp-for="InstancesModel.WordpressPass"
+                                       id="AdminPassword"
+                                       class="form-input h-12 w-full rounded-lg border border-border-light bg-background-light p-3 text-sm placeholder:text-subtle-light focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary dark:border-border-dark dark:bg-background-dark dark:text-white dark:placeholder:text-subtle-dark"
+                                       type="password"
+                                       placeholder="••••••••••••"/>
+                                <button type="button" id="togglePassword"
+                                        class="absolute inset-y-0 right-0 flex items-center px-4 text-gray-500 dark:text-gray-400 hover:text-primary">
+                                    <span id="passwordIcon" class="material-symbols-outlined">visibility</span>
+                                </button>
+                            </div>
+                            <span asp-validation-for="InstancesModel.WordpressPass"
+                                  class="text-red-600 text-sm mt-1"></span>
+                        </label>
+                        <div class="mt-2 space-y-2">
+                            <p class="text-sm text-gray-500 dark:text-gray-400">Must be at least 12 characters.</p>
+                            <div class="flex items-center gap-2">
+                                <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-1.5">
+                                    <div id="passwordStrengthBar" class="h-1.5 rounded-full" style="width: 0%;"></div>
+                                </div>
+                                <span id="passwordStrengthText" class="text-sm font-medium"> </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- CTA Button -->
+                    <div class="pt-4">
+                        <button type="submit"
+                                class="flex h-12 w-full items-center justify-center rounded-lg bg-blue-500 px-6 text-base font-semibold text-white transition-colors hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-100">
+                            Launch Site
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</main>
