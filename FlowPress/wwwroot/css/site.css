@@ -1,3 +1,5 @@
+/* ROLO Refactorizar css */
+
 * {
     margin: 0;
     padding: 0;
@@ -136,4 +138,65 @@ body {
     border-color: #dc2626;
     outline: none;
     box-shadow: 0 0 0 1px #dc2626;
+}
+
+@media (prefers-color-scheme: dark) {
+    body {
+        background-color: #121212;
+        color: #e0e0e0;
+    }
+
+    .header h1 {
+        color: #90CAF9;
+    }
+
+    .header p {
+        color: #b0b0b0;
+    }
+
+    .btn-primary {
+        background-color: #2196F3;
+        color: #ffffff;
+    }
+
+    .btn-primary:hover {
+        background-color: #1e88e5;
+    }
+
+    .btn-secondary {
+        background-color: transparent;
+        color: #90CAF9;
+        border: 2px solid #444;
+    }
+
+    .btn-secondary:hover {
+        background-color: #1e1e1e;
+        border-color: #90CAF9;
+    }
+
+    .divider {
+        border-top: 1px solid #333;
+    }
+
+    .features h2 {
+        color: #e0e0e0;
+    }
+
+    .feature-card h3 {
+        color: #ffffff;
+    }
+
+    .feature-card p {
+        color: #b0b0b0;
+    }
+
+    .feature-icon svg {
+        fill: #90CAF9;
+        stroke: #90CAF9;
+    }
+
+    .input-validation-error {
+        border-color: #f87171;
+        box-shadow: 0 0 0 1px #f87171;
+    }
 }
