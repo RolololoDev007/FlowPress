@@ -1,175 +1,174 @@
-/* Variables CSS */
+:root {
+    --bg-color: #ffffff;
+    --text-color: #333;
+    --text-secondary: #666;
+    --primary-color: #1976D2;
+    --primary-hover: #1565C0;
+    --border-color: #e0e0e0;
+    --card-bg: #ffffff;
+    --btn-secondary-bg: white;
+    --btn-secondary-border: #ddd;
+    --btn-secondary-hover-bg: #f5f5f5;
+    --divider-color: #e0e0e0;
+    --icon-color: #1976D2;
+    --validation-error: #dc2626;
+}
+
+@media (prefers-color-scheme: dark) {
     :root {
-        --bg-color: #ffffff;
-        --text-color: #333;
-        --text-secondary: #666;
-        --primary-color: #1976D2;
-        --primary-hover: #1565C0;
-        --border-color: #e0e0e0;
-        --card-bg: #ffffff;
-        --btn-secondary-bg: white;
-        --btn-secondary-border: #ddd;
-        --btn-secondary-hover-bg: #f5f5f5;
-        --divider-color: #e0e0e0;
-        --icon-color: #1976D2;
-        --validation-error: #dc2626;
+        --bg-color: #121212;
+        --text-color: #e0e0e0;
+        --text-secondary: #b0b0b0;
+        --primary-color: #2196F3;
+        --primary-hover: #1e88e5;
+        --border-color: #333;
+        --card-bg: transparent;
+        --btn-secondary-bg: transparent;
+        --btn-secondary-border: #444;
+        --btn-secondary-hover-bg: #1e1e1e;
+        --divider-color: #333;
+        --icon-color: #90CAF9;
+        --validation-error: #f87171;
     }
-    
-    @media (prefers-color-scheme: dark) {
-        :root {
-            --bg-color: #121212;
-            --text-color: #e0e0e0;
-            --text-secondary: #b0b0b0;
-            --primary-color: #2196F3;
-            --primary-hover: #1e88e5;
-            --border-color: #333;
-            --card-bg: transparent;
-            --btn-secondary-bg: transparent;
-            --btn-secondary-border: #444;
-            --btn-secondary-hover-bg: #1e1e1e;
-            --divider-color: #333;
-            --icon-color: #90CAF9;
-            --validation-error: #f87171;
-        }
-    }
-    
-    /* Estilos base */
-    * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-    }
-    
-    body {
-        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-        background-color: var(--bg-color);
-        color: var(--text-color);
-        line-height: 1.6;
-    }
-    
-    .container {
-        max-width: 1200px;
-        margin: 0 auto;
-        padding: 20px;
-    }
-    
-    .header {
-        text-align: center;
-        padding: 60px 20px 40px;
-    }
-    
-    .header h1 {
-        font-size: 3.5rem;
-        color: var(--primary-color);
-        margin-bottom: 20px;
-        font-weight: 600;
-    }
-    
-    .header p {
-        font-size: 1.1rem;
-        color: var(--text-secondary);
-        margin-bottom: 30px;
-    }
-    
-    .button-group {
-        display: flex;
-        gap: 15px;
-        justify-content: center;
-        flex-wrap: wrap;
-    }
-    
-    .btn {
-        padding: 12px 30px;
-        font-size: 1rem;
-        border-radius: 4px;
-        cursor: pointer;
-        text-decoration: none;
-        transition: all 0.3s ease;
-        border: none;
-        font-weight: 500;
-    }
-    
-    .btn-primary {
-        background-color: var(--primary-color);
-        color: white;
-    }
-    
-    .btn-primary:hover {
-        background-color: var(--primary-hover);
-    }
-    
-    .btn-secondary {
-        background-color: var(--btn-secondary-bg);
-        color: var(--primary-color);
-        border: 2px solid var(--btn-secondary-border);
-    }
-    
-    .btn-secondary:hover {
-        background-color: var(--btn-secondary-hover-bg);
-        border-color: var(--primary-color);
-    }
-    
-    .divider {
-        border-top: 1px solid var(--divider-color);
-        margin: 40px 0;
-    }
-    
-    .features {
-        padding: 40px 20px;
-    }
-    
-    .features h2 {
-        text-align: center;
-        font-size: 1.8rem;
-        color: var(--text-color);
-        margin-bottom: 50px;
-        font-weight: 500;
-    }
-    
-    .features-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-        gap: 40px;
-        max-width: 1000px;
-        margin: 0 auto;
-    }
-    
-    .feature-card {
-        text-align: center;
-        padding: 20px;
-    }
-    
-    .feature-icon {
-        width: 60px;
-        height: 60px;
-        margin: 0 auto 20px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-    
-    .feature-icon svg {
-        width: 100%;
-        height: 100%;
-        fill: var(--icon-color);
-        stroke: var(--icon-color);
-    }
-    
-    .feature-card h3 {
-        font-size: 1.3rem;
-        color: var(--text-color);
-        margin-bottom: 15px;
-        font-weight: 500;
-    }
-    
-    .feature-card p {
-        color: var(--text-secondary);
-        font-size: 0.95rem;
-        line-height: 1.6;
-    }
-    
-    .input-validation-error {
-        border-color: var(--validation-error);
-        outline: none;
-        box-shadow: 0 0 0 1px var(--validation-error);
-    }
+}
+
+/* Estilos base */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    line-height: 1.6;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.header {
+    text-align: center;
+    padding: 60px 20px 40px;
+}
+
+.header h1 {
+    font-size: 3.5rem;
+    color: var(--primary-color);
+    margin-bottom: 20px;
+    font-weight: 600;
+}
+
+.header p {
+    font-size: 1.1rem;
+    color: var(--text-secondary);
+    margin-bottom: 30px;
+}
+
+.button-group {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.btn {
+    padding: 12px 30px;
+    font-size: 1rem;
+    border-radius: 4px;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    border: none;
+    font-weight: 500;
+}
+
+.btn-primary {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+.btn-primary:hover {
+    background-color: var(--primary-hover);
+}
+
+.btn-secondary {
+    background-color: var(--btn-secondary-bg);
+    color: var(--primary-color);
+    border: 2px solid var(--btn-secondary-border);
+}
+
+.btn-secondary:hover {
+    background-color: var(--btn-secondary-hover-bg);
+    border-color: var(--primary-color);
+}
+
+.divider {
+    border-top: 1px solid var(--divider-color);
+    margin: 40px 0;
+}
+
+.features {
+    padding: 40px 20px;
+}
+
+.features h2 {
+    text-align: center;
+    font-size: 1.8rem;
+    color: var(--text-color);
+    margin-bottom: 50px;
+    font-weight: 500;
+}
+
+.features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 40px;
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.feature-card {
+    text-align: center;
+    padding: 20px;
+}
+
+.feature-icon {
+    width: 60px;
+    height: 60px;
+    margin: 0 auto 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.feature-icon svg {
+    width: 100%;
+    height: 100%;
+    fill: var(--icon-color);
+    stroke: var(--icon-color);
+}
+
+.feature-card h3 {
+    font-size: 1.3rem;
+    color: var(--text-color);
+    margin-bottom: 15px;
+    font-weight: 500;
+}
+
+.feature-card p {
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+    line-height: 1.6;
+}
+
+.input-validation-error {
+    border-color: var(--validation-error);
+    outline: none;
+    box-shadow: 0 0 0 1px var(--validation-error);
+}

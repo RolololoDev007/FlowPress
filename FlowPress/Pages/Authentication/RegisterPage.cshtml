@@ -6,102 +6,88 @@
     Layout = "_Layout";
 }
 
+@section Styles {
+    <link rel="stylesheet" href="~/css/auth-forms.css" asp-append-version="true"/>
+}
+
 <form method="post" asp-antiforgery="true">
-    <div class="relative flex min-h-screen w-full flex-col items-center justify-center p-4">
-        <main class="flex w-full max-w-md flex-col items-center justify-center">
-            <div class="w-full rounded-xl bg-card-light dark:bg-card-dark p-8 shadow-sm">
-                <div class="mb-8 text-center">
-                    <p class="text-2xl font-bold tracking-tight text-text-light dark:text-text-dark">Create Your Account</p>
-                    <p class="mt-2 text-sm text-subtle-light dark:text-subtle-dark">Manage all your WordPress sites from one place.</p>
-                </div>
-
-                <div class="flex flex-col gap-6">
-                    <!-- Username -->
-                    <label class="flex flex-col">
-                        <p class="pb-2 text-sm font-medium">Username</p>
-                        <div class="group flex w-full items-stretch rounded-lg">
-                            <input asp-for="RegisterModel.Username"
-                                   class="form-input h-12 flex-1 resize-none overflow-hidden rounded-l-lg border border-border-light bg-background-light p-3 text-sm placeholder:text-subtle-light focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary dark:border-border-dark dark:bg-gray-800 text-white dark:placeholder:text-subtle-dark"
-                                   placeholder="Enter your username"
-                                   type="text"/>
-                            <div class="flex items-center justify-center rounded-r-lg border border-l-0 border-border-light bg-background-light px-3 text-subtle-light group-focus-within:border-primary group-focus-within:text-primary dark:border-border-dark dark:bg-background-dark dark:text-subtle-dark">
-                                <span class="material-symbols-outlined" style="font-size: 20px;">person</span>
-                            </div>
-                        </div>
-                        <span asp-validation-for="RegisterModel.Username" class="text-red-600"></span>
-                    </label>
-
-                    <!-- Email -->
-                    <label class="flex flex-col">
-                        <p class="pb-2 text-sm font-medium">Email Address</p>
-                        <div class="group flex w-full items-stretch rounded-lg">
-                            <input asp-for="RegisterModel.Email"
-                                   class="form-input h-12 flex-1 resize-none overflow-hidden rounded-l-lg border border-border-light bg-background-light p-3 text-sm placeholder:text-subtle-light focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary dark:border-border-dark dark:bg-gray-800 text-white dark:placeholder:text-subtle-dark"
-                                   placeholder="Enter your email address"
-                                   type="email"/>
-                            <div class="flex items-center justify-center rounded-r-lg border border-l-0 border-border-light bg-background-light px-3 text-subtle-light group-focus-within:border-primary group-focus-within:text-primary dark:border-border-dark dark:bg-background-dark dark:text-subtle-dark">
-                                <span class="material-symbols-outlined" style="font-size: 20px;">email</span>
-                            </div>
-                        </div>
-                        <span asp-validation-for="RegisterModel.Email" class="text-red-600"></span>
-                    </label>
-
-                    <!-- Password -->
-                    <label class="flex flex-col">
-                        <p class="pb-2 text-sm font-medium">Password</p>
-                        <div class="group flex w-full items-stretch rounded-lg">
-                            <input asp-for="RegisterModel.Password"
-                                   class="form-input h-12 flex-1 resize-none overflow-hidden rounded-l-lg border border-border-light bg-background-light p-3 text-sm placeholder:text-subtle-light focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary dark:border-border-dark dark:bg-gray-800 text-white dark:placeholder:text-subtle-dark"
-                                   placeholder="Create a password"
-                                   type="password"/>
-                            <div class="flex items-center justify-center rounded-r-lg border border-l-0 border-border-light bg-background-light px-3 text-subtle-light group-focus-within:border-primary group-focus-within:text-primary dark:border-border-dark dark:bg-background-dark dark:text-subtle-dark">
-                                <span class="material-symbols-outlined" style="font-size: 20px;">lock</span>
-                            </div>
-                        </div>
-                        <span asp-validation-for="RegisterModel.Password" class="text-red-600"></span>
-                        <p class="text-xs text-red-600 dark:text-red-500 mt-1.5">Password must be at least 6 characters long.</p>
-                    </label>
-                    <!-- Confirm Password -->
-                    <label class="flex flex-col">
-                        <p class="pb-2 text-sm font-medium">Confirm Password</p>
-                        <div class="group flex w-full items-stretch rounded-lg">
-                            <input asp-for="RegisterModel.ConfirmPassword"
-                                   class="form-input h-12 flex-1 resize-none overflow-hidden rounded-l-lg border border-border-light bg-background-light p-3 text-sm placeholder:text-subtle-light focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary dark:border-border-dark dark:bg-gray-800 text-white dark:placeholder:text-subtle-dark"
-                                   placeholder="Confirm your password"
-                                   type="password"/>
-                            <div class="flex items-center justify-center rounded-r-lg border border-l-0 border-border-light bg-background-light px-3 text-subtle-light group-focus-within:border-primary group-focus-within:text-primary dark:border-border-dark dark:bg-background-dark dark:text-subtle-dark">
-                                <span class="material-symbols-outlined" style="font-size: 20px;">lock</span>
-                            </div>
-                        </div>
-                        <span asp-validation-for="RegisterModel.ConfirmPassword" class="text-red-600"></span>
-                    </label>
-
-                    <!-- Register Button -->
-                    <button type="submit"
-                            class="flex h-12 w-full items-center justify-center rounded-lg bg-blue-500 px-6 text-base font-semibold text-white transition-colors hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-100"
-                            disabled="@Model.IsRegistering">
-                        @if (Model.IsRegistering)
-                        {
-                            <text>Registering...</text>
-                        }
-                        else
-                        {
-                            <text>Register</text>
-                        }
-                    </button>
-                </div>
-
-                <!-- Sign In Link -->
-                <p class="mt-4 text-sm text-subtle-light dark:text-subtle-dark text-center">
-                    Already have an account? 
-                    <a class="font-semibold text-primary hover:underline" asp-page="/Login">Sign In</a>
-                </p>
-                
+    <div class="form-container">
+        <main class="form-card">
+            <div class="form-header">
+                <p class="form-title">Create Your Account</p>
+                <p class="form-subtitle">Manage all your WordPress sites from one place.</p>
             </div>
+            <div class="flex flex-col gap-6">
+                <!-- Username -->
+                <label class="flex flex-col">
+                    <p class="form-label">Username</p>
+                    <div class="input-group">
+                        <input asp-for="RegisterModel.Username" class="form-input" placeholder="Enter your username"
+                               type="text"/>
+                        <div class="input-icon">
+                            <span class="material-symbols-outlined" style="font-size: 20px;">person</span>
+                        </div>
+                    </div>
+                    <span asp-validation-for="RegisterModel.Username" class="validation-error"></span>
+                </label>
+                <!-- Email -->
+                <label class="flex flex-col">
+                    <p class="form-label">Email Address</p>
+                    <div class="input-group">
+                        <input asp-for="RegisterModel.Email" class="form-input" placeholder="Enter your email address"
+                               type="email"/>
+                        <div class="input-icon">
+                            <span class="material-symbols-outlined" style="font-size: 20px;">email</span>
+                        </div>
+                    </div>
+                    <span asp-validation-for="RegisterModel.Email" class="validation-error"></span>
+                </label>
+                <!-- Password -->
+                <label class="flex flex-col">
+                    <p class="form-label">Password</p>
+                    <div class="input-group">
+                        <input asp-for="RegisterModel.Password" class="form-input" placeholder="Create a password"
+                               type="password"/>
+                        <div class="input-icon">
+                            <span class="material-symbols-outlined" style="font-size: 20px;">lock</span>
+                        </div>
+                    </div>
+                    <span asp-validation-for="RegisterModel.Password" class="validation-error"></span>
+                    <p class="validation-error">Password must be at least 6 characters long.</p>
+                </label>
+                <!-- Confirm Password -->
+                <label class="flex flex-col">
+                    <p class="form-label">Confirm Password</p>
+                    <div class="input-group">
+                        <input asp-for="RegisterModel.ConfirmPassword" class="form-input"
+                               placeholder="Confirm your password" type="password"/>
+                        <div class="input-icon">
+                            <span class="material-symbols-outlined" style="font-size: 20px;">lock</span>
+                        </div>
+                    </div>
+                    <span asp-validation-for="RegisterModel.ConfirmPassword" class="validation-error"></span>
+                </label>
+                <!-- Register Button -->
+                <button type="submit" class="btn-primary" disabled="@Model.IsRegistering">
+                    @if (Model.IsRegistering)
+                    {
+                        <text>Registering...</text>
+                    }
+                    else
+                    {
+                        <text>Register</text>
+                    }
+                </button>
+            </div>
+            <!-- Sign In Link -->
+            <p class="form-subtitle text-center" style="margin-top: 1rem;">
+                Already have an account?
+                <a class="text-link" asp-page="/Login">Sign In</a>
+            </p>
             <!-- General messages -->
             @if (!string.IsNullOrEmpty(Model.Message))
             {
-                <p class="mt-4 text-sm text-subtle-light dark:text-subtle-dark">@Model.Message</p>
+                <p class="form-subtitle text-center" style="margin-top: 1rem;">@Model.Message</p>
             }
         </main>
     </div>

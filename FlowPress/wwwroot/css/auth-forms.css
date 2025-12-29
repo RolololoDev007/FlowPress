@@ -1,0 +1,134 @@
+.form-container {
+    position: relative;
+    display: flex;
+    min-height: 100vh;
+    width: 100%;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+}
+
+.form-card {
+    width: 100%;
+    max-width: 28rem;
+    border-radius: 0.75rem;
+    background-color: #ffffff;
+    padding: 2rem;
+    box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+}
+
+.form-header {
+    margin-bottom: 2rem;
+    text-align: center;
+}
+
+.form-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    letter-spacing: -0.025em;
+    color: #111827;
+}
+
+.form-subtitle {
+    margin-top: 0.5rem;
+    font-size: 0.875rem;
+    color: #6b7280;
+}
+
+.form-label {
+    padding-bottom: 0.5rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.input-group {
+    display: flex;
+    width: 100%;
+    align-items: stretch;
+    border-radius: 0.5rem;
+}
+
+.form-input {
+    height: 3rem;
+    flex: 1;
+    border-radius: 0.5rem 0 0 0.5rem;
+    border: 1px solid #d1d5db;
+    background-color: #f9fafb;
+    padding: 0.75rem;
+    font-size: 0.875rem;
+}
+
+.form-input:focus {
+    border-color: #3b82f6;
+    outline: none;
+    box-shadow: 0 0 0 1px #3b82f6;
+}
+
+.input-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0 0.5rem 0.5rem 0;
+    border: 1px solid #d1d5db;
+    border-left: 0;
+    background-color: #f9fafb;
+    padding: 0 0.75rem;
+    color: #6b7280;
+}
+
+.input-group:focus-within .input-icon {
+    border-color: #3b82f6;
+    color: #3b82f6;
+}
+
+.btn-primary {
+    display: flex;
+    height: 3rem;
+    width: 100%;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0.5rem;
+    background-color: rgb(59 130 246);
+    padding: 0 1.5rem;
+    font-size: 1rem;
+    font-weight: 600;
+    color: white;
+    transition: background-color 0.2s;
+}
+
+.btn-primary:hover {
+    background-color: rgb(37 99 235);
+}
+
+.validation-error {
+    color: #ef4444;
+    font-size: 13px;
+    margin-top: 0.25rem;
+}
+
+@media (prefers-color-scheme: dark) {
+    .form-card {
+        background-color: #1f2937;
+    }
+
+    .form-title {
+        color: #f9fafb;
+    }
+
+    .form-subtitle {
+        color: #9ca3af;
+    }
+
+    .form-input {
+        border-color: #374151;
+        background-color: #1f2937;
+        color: white;
+    }
+
+    .input-icon {
+        border-color: #374151;
+        background-color: #111827;
+        color: #9ca3af;
+    }
+}
