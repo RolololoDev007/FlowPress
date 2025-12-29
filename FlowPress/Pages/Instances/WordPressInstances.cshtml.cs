@@ -12,6 +12,6 @@ public class WordPressInstances(SupabaseService supabaseService) : PageModel
 
     public async Task OnGet()
     {
-        Instances = await supabaseService.SelectInstances();
+        Instances = await supabaseService.SelectInstancesAsync();
     }
 }

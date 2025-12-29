@@ -50,7 +50,7 @@ namespace FlowPress.Services
                     return false;
                 
                 // Hacemos una llamada al metodo para obtener el nombre del usuario
-                var username = await SelectUsername(session);
+                var username = await SelectUsernameAsync(session);
                 
                 // Crear los claims (información que se guarda en la cookie)
                 var claims = new List<Claim>
@@ -114,7 +114,7 @@ namespace FlowPress.Services
         #region ----------- SELECT TABLAS CUSTOM ----------
         // INFO
         /// Devuelve el nombre del usuario autenticado.
-        private async Task<string> SelectUsername(Session? session)
+        private async Task<string> SelectUsernameAsync(Session? session)
         {
             // Obtener el username desde la tabla UsersInfo
             var result = await _client
@@ -134,7 +134,7 @@ namespace FlowPress.Services
         
         // INFO
         /// Devuelve las instancias asociadas al usuario autenticado.
-        public async Task<List<InstancesModel>> SelectInstances()
+        public async Task<List<InstancesModel>> SelectInstancesAsync()
         {
             // Hacemos una llamada al HttpContext para que nos devuelva
             // el ID del usuario autenticado, que posteriormente necesitaremos
@@ -157,7 +157,7 @@ namespace FlowPress.Services
         
         // INFO
         /// Devuelve los registros/datos de la instancia seleccionada.
-        public async Task<InstancesModel?> SelectInstanceById(Guid id)
+        public async Task<InstancesModel?> SelectInstanceByIdAsync(Guid id)
         {
             // Obtener los registros de la instancia
             var result = await _client
@@ -171,11 +171,12 @@ namespace FlowPress.Services
         
         #endregion
 
-        #region ----------- DELETE REGISTROS ----------
+        #region ----------- UPDATE REGISTROS ----------
         
         // INFO
-        /// Elimina el registro de la instancia seleccionada.
-        public async Task<bool> DeleteInstanceById(Guid id)
+        /// Marca el campo de eliminado con la hora y la fecha actual
+        /// del registro de la instancia seleccionada.
+        public async Task<bool> DeleteInstanceByIdAsync(Guid id)
         {
             try
             {
@@ -189,7 +190,28 @@ namespace FlowPress.Services
             }
             catch (Exception ex)
             {
-                // log ex
+                Console.WriteLine(ex.Message);
+                return false;
+            }
+        }
+        
+        // INFO
+        /// Establece el estado de la instancia
+        public async Task<bool> InstanceStatusAsync(Guid id, string status)
+        {
+            try
+            {
+                await _client
+                    .From<InstancesModel>()
+                    .Where(x => x.Id == id)
+                    .Set(x => x.DockerStatus, status)
+                    .Update();
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
                 return false;
             }
         }

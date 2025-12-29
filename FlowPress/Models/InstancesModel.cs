@@ -31,10 +31,16 @@ public class InstancesModel : BaseModel
     
     [Column("wordpresspass")]
     [Required(ErrorMessage = "Wordpress Database Password required")]
-    public string WordpressPass { get; set; } = string.Empty;
+    public string WordpressPass { get; set; } = string.Empty;   
     
-    [Column("dockerscript")]
-    public string DockerScript { get; set; } = string.Empty;    
+    [Column("dockerinstancenamewp")]
+    public string DockerInstanceNameWp { get; set; } = string.Empty;
+    
+    [Column("dockerinstancenamedb")]
+    public string DockerInstanceNameDb { get; set; } = string.Empty;
+    
+    [Column("status")]
+    public string DockerStatus { get; set; } = string.Empty;    
     
     [Column("eliminated_at")]
     public DateTime? EliminatedAt { get; set; }

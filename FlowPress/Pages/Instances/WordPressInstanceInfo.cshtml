@@ -4,6 +4,14 @@
 @{
     Layout = "_Layout";
     ViewData["Title"] = "Instance Info";
+    
+    var statusClasses = Model.Instance?.DockerStatus switch
+    {
+        "running" => ("bg-green-100 dark:bg-green-900/40", "bg-green-500", "text-green-800 dark:text-green-400", "Running"),
+        "stopped" => ("bg-red-100 dark:bg-red-900/40", "bg-red-500", "text-red-800 dark:text-red-400", "Stopped"),
+        "restarted" => ("bg-yellow-100 dark:bg-yellow-900/40", "bg-yellow-500", "text-yellow-800 dark:text-yellow-400", "Restarting"),
+        _ => ("bg-gray-100 dark:bg-gray-900/40", "bg-gray-500", "text-gray-800 dark:text-gray-400", "Unknown")
+    };
 }
 
 <main class="flex-1 p-6 lg:p-10">
@@ -24,9 +32,9 @@
                     @*     <span class="material-symbols-outlined text-lg">edit</span> *@
                     @* </button> *@
                 </div>
-                <div class="flex items-center gap-2 px-3 py-1 bg-green-100 dark:bg-green-900/40 rounded-full">
-                    <span class="h-2 w-2 rounded-full bg-green-500"></span>
-                    <p class="text-green-800 dark:text-green-400 text-sm font-medium">Running</p>
+                <div class="flex items-center gap-2 px-3 py-1 @statusClasses.Item1 rounded-full">
+                    <span class="h-2 w-2 rounded-full @statusClasses.Item2"></span>
+                    <p class="@statusClasses.Item3 text-sm font-medium">@statusClasses.Item4</p>
                 </div>
             </div>
         </header>
@@ -47,16 +55,8 @@
 
                         </div>
                         <div class="flex flex-col gap-1">
-                            <p class="text-gray-500 dark:text-[#9dabb9] text-sm">IP Address</p>
-                            <p class="text-gray-800 dark:text-white text-sm">192.168.1.1</p>
-                        </div>
-                        <div class="flex flex-col gap-1">
                             <p class="text-gray-500 dark:text-[#9dabb9] text-sm">WordPress Version</p>
                             <p class="text-gray-800 dark:text-white text-sm">6.1.1</p>
-                        </div>
-                        <div class="flex flex-col gap-1">
-                            <p class="text-gray-500 dark:text-[#9dabb9] text-sm">PHP Version</p>
-                            <p class="text-gray-800 dark:text-white text-sm">8.1</p>
                         </div>
                     </div>
                 </div>
@@ -91,7 +91,6 @@
 
             <!-- Right Column -->
             <div class="lg:col-span-2 flex flex-col gap-8">
-                <!-- ROLO Terminar de mirar y hacer toda la lógica -->
                 <!-- Primary Actions -->
                 <div class="bg-white dark:bg-[#1C2834] rounded-xl shadow-sm">
                     <h2 class="text-gray-900 dark:text-white text-lg font-bold p-4 border-b border-gray-200 dark:border-white/10">
@@ -99,63 +98,36 @@
                     </h2>
                     <div class="p-4 flex flex-wrap gap-3">
                         <form method="post">
-                            <button asp-page-handler="Start"
-                                    class="flex items-center gap-2 h-10 px-4 rounded-lg bg-green-600/10 text-green-600 hover:bg-green-600/20">
+                            <button asp-page-handler="Start" asp-route-id="@Model.Instance.Id"
+                                    class="flex items-center gap-2 h-10 px-4 rounded-lg bg-green-600/10 text-green-600 hover:bg-green-600/20 disabled:opacity-50 disabled:cursor-not-allowed"
+                                    disabled="@(Model.Instance.DockerStatus == "running")">
                                 <span class="material-symbols-outlined text-xl">play_arrow</span>
                                 <span class="text-sm font-bold">Start</span>
                             </button>
                         </form>
                         <form method="post">
-                            <button asp-page-handler="Stop"
-                                    class="flex items-center gap-2 h-10 px-4 rounded-lg bg-red-600/10 text-red-600 hover:bg-red-600/20">
+                            <button asp-page-handler="Stop" asp-route-id="@Model.Instance.Id"
+                                    class="flex items-center gap-2 h-10 px-4 rounded-lg bg-red-600/10 text-red-600 hover:bg-red-600/20 disabled:opacity-50 disabled:cursor-not-allowed"
+                                    disabled="@(Model.Instance.DockerStatus == "stopped")">
                                 <span class="material-symbols-outlined text-xl">stop</span>
                                 <span class="text-sm font-bold">Stop</span>
                             </button>
                         </form>
                         <form method="post">
-                            <button asp-page-handler="Restart"
-                                    class="flex items-center gap-2 h-10 px-4 rounded-lg bg-yellow-500/10 text-yellow-600 hover:bg-yellow-500/20">
+                            <button asp-page-handler="Restart" asp-route-id="@Model.Instance.Id"
+                                    class="flex items-center gap-2 h-10 px-4 rounded-lg bg-yellow-500/10 text-yellow-600 hover:bg-yellow-500/20 disabled:opacity-50 disabled:cursor-not-allowed"
+                                    disabled="@(Model.Instance.DockerStatus == "restarted" || Model.Instance.DockerStatus == "stopped")">
                                 <span class="material-symbols-outlined text-xl">refresh</span>
                                 <span class="text-sm font-bold">Restart</span>
                             </button>
                         </form>
                     </div>
                 </div>
-
-                <!-- Access Credentials -->
-                <div class="bg-white dark:bg-[#1C2834] rounded-xl shadow-sm">
-                    <h2 class="text-gray-900 dark:text-white text-lg font-bold p-4 border-b border-gray-200 dark:border-white/10">
-                        Access Credentials</h2>
-                    <div class="divide-y divide-gray-200 dark:divide-white/10">
-                        <div class="p-4 grid grid-cols-1 md:grid-cols-[1fr_auto] gap-2 items-center">
-                            <div>
-                                <p class="text-gray-500 dark:text-[#9dabb9] text-sm">SFTP/SSH Host</p>
-                                <p class="text-gray-800 dark:text-white font-mono text-sm">sftp.myawesomesite.com</p>
-                            </div>
-                            <button
-                                class="flex items-center gap-2 h-9 px-3 rounded-lg bg-primary/20 text-primary text-sm hover:bg-primary/30">
-                                <span class="material-symbols-outlined text-base">content_copy</span>
-                                <span>Copy</span>
-                            </button>
-                        </div>
-                        <div class="p-4 grid grid-cols-1 md:grid-cols-[1fr_auto] gap-2 items-center">
-                            <div>
-                                <p class="text-gray-500 dark:text-[#9dabb9] text-sm">Database Host</p>
-                                <p class="text-gray-800 dark:text-white font-mono text-sm">db.myawesomesite.local</p>
-                            </div>
-                            <button
-                                class="flex items-center gap-2 h-9 px-3 rounded-lg bg-primary/20 text-primary text-sm hover:bg-primary/30">
-                                <span class="material-symbols-outlined text-base">content_copy</span>
-                                <span>Copy</span>
-                            </button>
-                        </div>
-                    </div>
-                </div>
                 
                 <!--#region MEJORAS  -->
                 <!-- WP-CLI -->
                 @* <div class="bg-white dark:bg-[#1C2834] rounded-xl shadow-sm"> *@
-                @*     <h2 class="text-gray-900 dark:text-white text-lg font-bold p-4 border-b border-gray-200 dark:border-white/10"> *@
+                @*     <h2 class="text-gray-900 dark:text-black text-lg font-bold p-4 border-b border-gray-200 dark:border-white/10"> *@
                 @*         WP-CLI Access</h2> *@
                 @*     <div class="p-4"> *@
                 @*         <div class="bg-black rounded-lg p-4 font-mono text-sm text-green-400 h-48 overflow-y-auto mb-4"> *@

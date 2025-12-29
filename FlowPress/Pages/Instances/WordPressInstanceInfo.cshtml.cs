@@ -11,40 +11,69 @@ namespace FlowPress.Pages.Instances;
 public class WordPressInstanceInfo(SupabaseService supabaseService) : PageModel
 {
     public InstancesModel? Instance { get; set; }
-
+    
     public async Task<IActionResult> OnGet(Guid id)
     {
-        Instance = await supabaseService.SelectInstanceById(id);
+        Instance = await supabaseService.SelectInstanceByIdAsync(id);
 
         if (Instance == null)
             return NotFound();
 
         return Page();
     }
-    // ROLO Hacer toda la lógica (Mirar de hacer mediante conexión ssh)
-    public IActionResult OnPostStart()
+    // INFO
+    /// Cuando se le de click al botón de start se mandara
+    /// la petición de arranque al servidor docker
+    public async Task<IActionResult> OnPostStartAsync(Guid id)
     {
-        RunCommand("docker compose start");
-        return RedirectToPage();
+        Instance = await supabaseService.SelectInstanceByIdAsync(id);
+        if (Instance == null) return NotFound();
+        
+        await DockerCommandsAsync($"start {Instance.DockerInstanceNameDb}");
+        await DockerCommandsAsync($"start {Instance.DockerInstanceNameWp}");
+        await supabaseService.InstanceStatusAsync(id, "running");
+        return RedirectToPage(new { id });
     }
-    public IActionResult OnPostStop()
+    // INFO
+    /// Cuando se le de click al botón de parar se mandara
+    /// la petición de stop al servidor docker
+    public async Task<IActionResult> OnPostStopAsync(Guid id)
     {
-        RunCommand("docker compose stop");
-        return RedirectToPage();
+        Instance = await supabaseService.SelectInstanceByIdAsync(id);
+        if (Instance == null) return NotFound();
+        
+        await DockerCommandsAsync($"stop {Instance.DockerInstanceNameDb}");
+        await DockerCommandsAsync($"stop {Instance.DockerInstanceNameWp}");
+        await supabaseService.InstanceStatusAsync(id, "stopped");
+        
+        return RedirectToPage(new { id });
     }
-    public IActionResult OnPostRestart()
+    // INFO
+    /// Cuando se le de click al botón de reiniciar se mandara
+    /// la petición de reiniciar al servidor docker
+    public async Task<IActionResult> OnPostRestartAsync(Guid id)
     {
-        RunCommand("docker compose restart");
-        return RedirectToPage();
+        Instance = await supabaseService.SelectInstanceByIdAsync(id);
+        if (Instance == null) return NotFound();
+        
+        await supabaseService.InstanceStatusAsync(id, "restarted");
+        await DockerCommandsAsync($"restart {Instance.DockerInstanceNameDb}");
+        await DockerCommandsAsync($"restart {Instance.DockerInstanceNameWp}");
+        await supabaseService.InstanceStatusAsync(id, "running");
+        
+        return RedirectToPage(new { id });
     }
-    private void RunCommand(string command)
+    // INFO
+    /// Este será el que se encargue de mandar las peticiones al servidor docker
+    /// para ejecutar los comandos necesarios.
+    private async Task DockerCommandsAsync(string dockerCommand)
     {
         var process = new Process
         {
             StartInfo = new ProcessStartInfo
             {
-                FileName = "/bin/bash",
-                Arguments = $"-c \"{command}\"",
+                FileName = "ssh",
+                Arguments = $"dockeruser@20.90.161.35 \"docker {dockerCommand}\"",
                 RedirectStandardOutput = true,
                 RedirectStandardError = true,
                 UseShellExecute = false,
@@ -53,22 +82,44 @@ public class WordPressInstanceInfo(SupabaseService supabaseService) : PageModel
         };
 
         process.Start();
-        process.WaitForExit();
+
+        var stdout = await process.StandardOutput.ReadToEndAsync();
+        var stderr = await process.StandardError.ReadToEndAsync();
+
+        await process.WaitForExitAsync();
+
+        if (process.ExitCode != 0)
+            throw new Exception($"Remote Docker error:\n{stderr}");
     }
     
     // INFO 
     /// Con este metodo, rellenaremos el campo eliminated_at de la instancia a borrar.
+    /// Además, paramos los contenedores docker asociados a la instancia.
     public async Task<IActionResult> OnPostDeleteAsync(Guid id)
     {
-        bool deleted = await supabaseService.DeleteInstanceById(id);
-    
+        Instance = await supabaseService.SelectInstanceByIdAsync(id);
+
+        if (Instance == null)
+        {
+            TempData["Message"] = "La instancia no existe";
+            return RedirectToPage("/Instances/WordPressInstances");
+        }
+
+        await DockerCommandsAsync($"stop {Instance.DockerInstanceNameDb}");
+        await DockerCommandsAsync($"stop {Instance.DockerInstanceNameWp}");
+
+        bool deleted = await supabaseService.DeleteInstanceByIdAsync(id);
+
         if (!deleted)
         {
-            // Recarga la instancia antes de volver a la página
-            Instance = await supabaseService.SelectInstanceById(id);
+            TempData["Message"] = "Error al eliminar la instancia";
             return Page();
         }
+
+        await supabaseService.InstanceStatusAsync(id, "deleted");
+
         TempData["Message"] = "Instancia eliminada";
         return RedirectToPage("/Instances/WordPressInstances");
     }
+
 }
