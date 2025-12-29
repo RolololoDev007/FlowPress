@@ -21,7 +21,7 @@
                         <p class="pb-2 text-sm font-medium">Username</p>
                         <div class="group flex w-full items-stretch rounded-lg">
                             <input asp-for="RegisterModel.Username"
-                                   class="form-input h-12 flex-1 resize-none overflow-hidden rounded-l-lg border border-border-light bg-background-light p-3 text-sm placeholder:text-subtle-light focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary dark:border-border-dark dark:bg-background-dark dark:text-black dark:placeholder:text-subtle-dark"
+                                   class="form-input h-12 flex-1 resize-none overflow-hidden rounded-l-lg border border-border-light bg-background-light p-3 text-sm placeholder:text-subtle-light focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary dark:border-border-dark dark:bg-gray-800 text-white dark:placeholder:text-subtle-dark"
                                    placeholder="Enter your username"
                                    type="text"/>
                             <div class="flex items-center justify-center rounded-r-lg border border-l-0 border-border-light bg-background-light px-3 text-subtle-light group-focus-within:border-primary group-focus-within:text-primary dark:border-border-dark dark:bg-background-dark dark:text-subtle-dark">
@@ -36,7 +36,7 @@
                         <p class="pb-2 text-sm font-medium">Email Address</p>
                         <div class="group flex w-full items-stretch rounded-lg">
                             <input asp-for="RegisterModel.Email"
-                                   class="form-input h-12 flex-1 resize-none overflow-hidden rounded-l-lg border border-border-light bg-background-light p-3 text-sm placeholder:text-subtle-light focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary dark:border-border-dark dark:bg-background-dark dark:text-black dark:placeholder:text-subtle-dark"
+                                   class="form-input h-12 flex-1 resize-none overflow-hidden rounded-l-lg border border-border-light bg-background-light p-3 text-sm placeholder:text-subtle-light focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary dark:border-border-dark dark:bg-gray-800 text-white dark:placeholder:text-subtle-dark"
                                    placeholder="Enter your email address"
                                    type="email"/>
                             <div class="flex items-center justify-center rounded-r-lg border border-l-0 border-border-light bg-background-light px-3 text-subtle-light group-focus-within:border-primary group-focus-within:text-primary dark:border-border-dark dark:bg-background-dark dark:text-subtle-dark">
@@ -51,7 +51,7 @@
                         <p class="pb-2 text-sm font-medium">Password</p>
                         <div class="group flex w-full items-stretch rounded-lg">
                             <input asp-for="RegisterModel.Password"
-                                   class="form-input h-12 flex-1 resize-none overflow-hidden rounded-l-lg border border-border-light bg-background-light p-3 text-sm placeholder:text-subtle-light focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary dark:border-border-dark dark:bg-background-dark dark:text-black dark:placeholder:text-subtle-dark"
+                                   class="form-input h-12 flex-1 resize-none overflow-hidden rounded-l-lg border border-border-light bg-background-light p-3 text-sm placeholder:text-subtle-light focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary dark:border-border-dark dark:bg-gray-800 text-white dark:placeholder:text-subtle-dark"
                                    placeholder="Create a password"
                                    type="password"/>
                             <div class="flex items-center justify-center rounded-r-lg border border-l-0 border-border-light bg-background-light px-3 text-subtle-light group-focus-within:border-primary group-focus-within:text-primary dark:border-border-dark dark:bg-background-dark dark:text-subtle-dark">
@@ -61,13 +61,12 @@
                         <span asp-validation-for="RegisterModel.Password" class="text-red-600"></span>
                         <p class="text-xs text-red-600 dark:text-red-500 mt-1.5">Password must be at least 6 characters long.</p>
                     </label>
-
                     <!-- Confirm Password -->
                     <label class="flex flex-col">
                         <p class="pb-2 text-sm font-medium">Confirm Password</p>
                         <div class="group flex w-full items-stretch rounded-lg">
                             <input asp-for="RegisterModel.ConfirmPassword"
-                                   class="form-input h-12 flex-1 resize-none overflow-hidden rounded-l-lg border border-border-light bg-background-light p-3 text-sm placeholder:text-subtle-light focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary dark:border-border-dark dark:bg-background-dark dark:text-black dark:placeholder:text-subtle-dark"
+                                   class="form-input h-12 flex-1 resize-none overflow-hidden rounded-l-lg border border-border-light bg-background-light p-3 text-sm placeholder:text-subtle-light focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary dark:border-border-dark dark:bg-gray-800 text-white dark:placeholder:text-subtle-dark"
                                    placeholder="Confirm your password"
                                    type="password"/>
                             <div class="flex items-center justify-center rounded-r-lg border border-l-0 border-border-light bg-background-light px-3 text-subtle-light group-focus-within:border-primary group-focus-within:text-primary dark:border-border-dark dark:bg-background-dark dark:text-subtle-dark">
