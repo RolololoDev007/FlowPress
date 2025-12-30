@@ -25,14 +25,6 @@ public class InstancesModel : BaseModel
     [Required(ErrorMessage = "Site address required")]
     public string SiteAddress { get; set; } = string.Empty;
     
-    [Column("wordpressuser")]
-    [Required(ErrorMessage = "Wordpress Database User required")]
-    public string WordpressUser { get; set; } = string.Empty;
-    
-    [Column("wordpresspass")]
-    [Required(ErrorMessage = "Wordpress Database Password required")]
-    public string WordpressPass { get; set; } = string.Empty;   
-    
     [Column("dockerinstancenamewp")]
     public string DockerInstanceNameWp { get; set; } = string.Empty;
     

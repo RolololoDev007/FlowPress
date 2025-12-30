@@ -11,8 +11,7 @@ namespace FlowPress.Pages.Instances;
 [Authorize]
 public class WordPressCreateInstance(SupabaseService supabaseService) : PageModel
 {
-    [BindProperty] 
-    public InstancesModel InstancesModel { get; set; } = new();
+    [BindProperty] public InstancesModel InstancesModel { get; set; } = new();
 
     public void OnGet()
     {
@@ -22,13 +21,13 @@ public class WordPressCreateInstance(SupabaseService supabaseService) : PageMode
     {
         if (!ModelState.IsValid)
             return Page();
-        
+
         // Obtener el UserId desde los claims
         var userId = User.FindFirstValue("userid");
 
         if (string.IsNullOrEmpty(userId))
             return Unauthorized();
-        
+
         try
         {
             var instanceId = await CrearInstancia(userId);
@@ -36,18 +35,7 @@ public class WordPressCreateInstance(SupabaseService supabaseService) : PageMode
         }
         catch (PostgrestException ex)
         {
-            if (ex.Message.Contains("password_min_length"))
-            {
-                ModelState.AddModelError(
-                    "InstancesModel.WordpressPass",
-                    "La contraseña debe tener una longitud mínima."
-                );
-            }
-            else
-            {
-                ModelState.AddModelError(string.Empty, "Ha ocurrido un error al crear la instancia.");
-            }
-
+            ModelState.AddModelError(string.Empty, "Ha ocurrido un error al crear la instancia.");
             return Page();
         }
     }
@@ -59,8 +47,7 @@ public class WordPressCreateInstance(SupabaseService supabaseService) : PageMode
             IdUser = userId,
             SiteName = InstancesModel.SiteName,
             SiteAddress = InstancesModel.SiteAddress.ToLower() + ".flowpress.site",
-            WordpressUser = InstancesModel.WordpressUser,
-            WordpressPass = InstancesModel.WordpressPass
+            DockerStatus = "pending"
         };
 
         await supabaseService.InsertAsync(instancia);
