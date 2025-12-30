@@ -4,7 +4,7 @@
 @{
     Layout = "_Layout";
     ViewData["Title"] = "Instance Info";
-    
+
     var statusClasses = Model.Instance?.DockerStatus switch
     {
         "running" => ("bg-green-100 dark:bg-green-900/40", "bg-green-500", "text-green-800 dark:text-green-400", "Running"),
@@ -14,160 +14,475 @@
     };
 }
 
-<main class="flex-1 p-6 lg:p-10">
-    <div class="mx-auto max-w-7xl">
-        <header class="mb-8">
-            <div class="flex flex-wrap gap-2 mb-4">
-                <a class="text-gray-500 dark:text-[#9dabb9] text-sm font-medium hover:text-primary dark:hover:text-primary"
-                   href="/instances">Instances</a>
-                <span class="text-gray-500 dark:text-[#9dabb9] text-sm font-medium">/</span>
-                <span class="text-gray-800 dark:text-white text-sm font-medium">@Model.Instance?.SiteName</span>
+<style>
+    .instance-container {
+        flex: 1;
+        padding: 1.5rem;
+    }
+
+    .instance-content {
+        margin: 0 auto;
+        max-width: 80rem;
+    }
+
+    .instance-header {
+        margin-bottom: 2rem;
+    }
+
+    .breadcrumb {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        margin-bottom: 1rem;
+    }
+
+    .breadcrumb-link {
+        color: #6b7280;
+        font-size: 0.875rem;
+        font-weight: 500;
+    }
+
+    .breadcrumb-link:hover {
+        color: #3b82f6;
+    }
+
+    .breadcrumb-current {
+        color: #111827;
+        font-size: 0.875rem;
+        font-weight: 500;
+    }
+
+    .header-content {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+    }
+
+    .header-title-group {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .page-title {
+        color: #111827;
+        font-size: 1.875rem;
+        font-weight: 900;
+        line-height: 1.2;
+        letter-spacing: -0.033em;
+    }
+
+    .status-badge {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.25rem 0.75rem;
+        border-radius: 9999px;
+    }
+
+    .status-dot {
+        height: 0.5rem;
+        width: 0.5rem;
+        border-radius: 9999px;
+    }
+
+    .status-text {
+        font-size: 0.875rem;
+        font-weight: 500;
+    }
+
+    .grid-layout {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 2rem;
+    }
+
+    .card {
+        background-color: #ffffff;
+        border-radius: 0.75rem;
+        box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+    }
+
+    .card-header {
+        padding: 1rem;
+        border-bottom: 1px solid #e5e7eb;
+    }
+
+    .card-title {
+        color: #111827;
+        font-size: 1.125rem;
+        font-weight: 700;
+    }
+
+    .card-body {
+        padding: 1rem;
+    }
+
+    .details-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+
+    .detail-item {
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+        padding-right: 0.5rem;
+    }
+
+    .detail-label {
+        color: #6b7280;
+        font-size: 0.875rem;
+    }
+
+    .detail-value {
+        color: #111827;
+        font-size: 0.875rem;
+    }
+
+    .detail-link {
+        color: #3b82f6;
+        font-size: 0.875rem;
+    }
+
+    .detail-link:hover {
+        text-decoration: underline;
+    }
+
+    .monitoring-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .monitoring-label {
+        color: #6b7280;
+        font-size: 0.875rem;
+    }
+
+    .monitoring-value {
+        color: #10b981;
+        font-size: 0.875rem;
+        font-weight: 500;
+    }
+
+    .progress-bar-wrapper {
+        margin-top: 0.25rem;
+    }
+
+    .progress-bar-bg {
+        width: 100%;
+        height: 0.5rem;
+        background-color: #e5e7eb;
+        border-radius: 9999px;
+    }
+
+    .progress-bar-fill {
+        height: 0.5rem;
+        background-color: #10b981;
+        border-radius: 9999px;
+    }
+
+    .action-buttons {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+    }
+
+    .btn-action {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        height: 2.5rem;
+        padding: 0 1rem;
+        border-radius: 0.5rem;
+        font-size: 0.875rem;
+        font-weight: 700;
+        transition: background-color 0.2s;
+    }
+
+    .btn-action:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+
+    .btn-start {
+        background-color: rgb(22 163 74 / 0.1);
+        color: #16a34a;
+    }
+
+    .btn-start:hover:not(:disabled) {
+        background-color: rgb(22 163 74 / 0.2);
+    }
+
+    .btn-stop {
+        background-color: rgb(220 38 38 / 0.1);
+        color: #dc2626;
+    }
+
+    .btn-stop:hover:not(:disabled) {
+        background-color: rgb(220 38 38 / 0.2);
+    }
+
+    .btn-restart {
+        background-color: rgb(234 179 8 / 0.1);
+        color: #ca8a04;
+    }
+
+    .btn-restart:hover:not(:disabled) {
+        background-color: rgb(234 179 8 / 0.2);
+    }
+
+    .danger-zone {
+        border: 1px solid rgb(239 68 68 / 0.3);
+        border-radius: 0.75rem;
+        padding: 1rem;
+    }
+
+    .danger-title {
+        color: #b91c1c;
+        font-size: 1.125rem;
+        font-weight: 700;
+    }
+
+    .danger-description {
+        color: rgb(220 38 38 / 0.8);
+        font-size: 0.875rem;
+        margin-top: 0.25rem;
+    }
+
+    .danger-action {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 1rem;
+    }
+
+    .danger-action-text {
+        color: #111827;
+        font-weight: 500;
+    }
+
+    .danger-action-description {
+        color: #6b7280;
+        font-size: 0.875rem;
+    }
+
+    .btn-danger {
+        height: 2.5rem;
+        padding: 0 1rem;
+        border-radius: 0.5rem;
+        background-color: #dc2626;
+        color: white;
+        font-size: 0.875rem;
+        font-weight: 700;
+    }
+
+    .btn-danger:hover {
+        background-color: #b91c1c;
+    }
+
+    @@media (min-width: 640px) {
+        .details-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+
+    @@media (min-width: 1024px) {
+        .instance-container {
+            padding: 2.5rem;
+        }
+
+        .page-title {
+            font-size: 2.25rem;
+        }
+
+        .grid-layout {
+            grid-template-columns: 1fr 2fr;
+        }
+
+        .details-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @@media (prefers-color-scheme: dark) {
+        .breadcrumb-link {
+            color: #9dabb9;
+        }
+
+        .breadcrumb-current {
+            color: white;
+        }
+
+        .page-title {
+            color: white;
+        }
+
+        .card {
+            background-color: #1C2834;
+        }
+
+        .card-header {
+            border-bottom-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .card-title {
+            color: white;
+        }
+
+        .detail-label {
+            color: #9dabb9;
+        }
+
+        .detail-value {
+            color: white;
+        }
+
+        .monitoring-label {
+            color: #94a3b8;
+        }
+
+        .progress-bar-bg {
+            background-color: #475569;
+        }
+
+        .danger-zone {
+            border-color: rgb(239 68 68 / 0.5);
+        }
+
+        .danger-title {
+            color: #f87171;
+        }
+
+        .danger-description {
+            color: rgb(248 113 113 / 0.8);
+        }
+
+        .danger-action-text {
+            color: white;
+        }
+
+        .danger-action-description {
+            color: #9ca3af;
+        }
+    }
+</style>
+
+<main class="instance-container">
+    <div class="instance-content">
+        <header class="instance-header">
+            <div class="breadcrumb">
+                <a class="breadcrumb-link" href="/instances">Instances</a>
+                <span class="breadcrumb-link">/</span>
+                <span class="breadcrumb-current">@Model.Instance?.SiteName</span>
             </div>
-            <div class="flex flex-wrap items-center justify-between gap-4">
-                <div class="flex items-center gap-4">
-                    <h1 class="text-gray-900 dark:text-white text-3xl lg:text-4xl font-black leading-tight tracking-[-0.033em]">
-                        @Model.Instance?.SiteName
-                    </h1>
-                    @* <button class="text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white"> *@
-                    @*     <span class="material-symbols-outlined text-lg">edit</span> *@
-                    @* </button> *@
+            <div class="header-content">
+                <div class="header-title-group">
+                    <h1 class="page-title">@Model.Instance?.SiteName</h1>
                 </div>
-                <div class="flex items-center gap-2 px-3 py-1 @statusClasses.Item1 rounded-full">
-                    <span class="h-2 w-2 rounded-full @statusClasses.Item2"></span>
-                    <p class="@statusClasses.Item3 text-sm font-medium">@statusClasses.Item4</p>
+                <div class="status-badge @statusClasses.Item1">
+                    <span class="status-dot @statusClasses.Item2"></span>
+                    <p class="status-text @statusClasses.Item3">@statusClasses.Item4</p>
                 </div>
             </div>
         </header>
 
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div class="grid-layout">
             <!-- Left Column -->
-            <div class="lg:col-span-1 flex flex-col gap-8">
-                <div class="bg-white dark:bg-[#1C2834] rounded-xl shadow-sm">
-                    <h2 class="text-gray-900 dark:text-white text-lg font-bold p-4 border-b border-gray-200 dark:border-white/10">
-                        Instance Details</h2>
-                    <div class="p-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-y-4">
-                        <div class="flex flex-col gap-1 pr-2">
-                            <p class="text-gray-500 dark:text-[#9dabb9] text-sm">Site URL</p>
-                            <a class="text-primary text-sm hover:underline"
-                               href="https://@($"{Model.Instance?.SiteAddress}")">
+            <div class="flex flex-col gap-8">
+                <div class="card">
+                    <h2 class="card-title card-header">Instance Details</h2>
+                    <div class="card-body details-grid">
+                        <div class="detail-item">
+                            <p class="detail-label">Site URL</p>
+                            <a class="detail-link" href="https://@($"{Model.Instance?.SiteAddress}")">
                                 @($"{Model.Instance?.SiteAddress}")
                             </a>
-
                         </div>
-                        <div class="flex flex-col gap-1">
-                            <p class="text-gray-500 dark:text-[#9dabb9] text-sm">WordPress Version</p>
-                            <p class="text-gray-800 dark:text-white text-sm">6.1.1</p>
+                        <div class="detail-item">
+                            <p class="detail-label">WordPress Version</p>
+                            <p class="detail-value">6.1.1</p>
                         </div>
                     </div>
                 </div>
 
-                <section
-                    class="bg-white dark:bg-slate-900/70 border border-slate-200 dark:border-slate-800 rounded-lg shadow-sm">
-                    <header class="p-4 border-b border-slate-200 dark:border-slate-800">
-                        <h2 class="text-slate-900 dark:text-white text-lg font-bold">Monitoring</h2>
+                <section class="card">
+                    <header class="card-header">
+                        <h2 class="card-title">Monitoring</h2>
                     </header>
-                    <div class="p-4 space-y-4">
-                        <div class="flex items-center justify-between">
-                            <span class="text-slate-500 dark:text-slate-400 text-sm">Current Status</span>
-                            <span class="font-medium text-success text-sm">Up</span>
+                    <div class="card-body" style="display: flex; flex-direction: column; gap: 1rem;">
+                        <div class="monitoring-item">
+                            <span class="monitoring-label">Current Status</span>
+                            <span class="monitoring-value">Up</span>
                         </div>
                         <div>
-                            <div class="flex justify-between mb-1">
-                                <span
-                                    class="text-sm font-medium text-slate-500 dark:text-slate-400">Uptime (30 days)</span>
-                                <span class="text-sm font-medium text-slate-800 dark:text-slate-200">99.98%</span>
+                            <div class="monitoring-item progress-bar-wrapper">
+                                <span class="monitoring-label">Uptime (30 days)</span>
+                                <span class="detail-value">99.98%</span>
                             </div>
-                            <div class="w-full bg-slate-200 dark:bg-slate-700 rounded-full h-2">
-                                <div class="bg-success h-2 rounded-full" style="width: 99.98%"></div>
+                            <div class="progress-bar-bg">
+                                <div class="progress-bar-fill" style="width: 99.98%"></div>
                             </div>
                         </div>
-                        <a class="flex items-center gap-1.5 text-primary text-sm hover:underline" href="#">
+                        <a class="detail-link" href="#" style="display: flex; align-items: center; gap: 0.375rem;">
                             <span>View Full Status Page</span>
-                            <span class="material-symbols-outlined !text-sm">arrow_forward</span>
+                            <span class="material-symbols-outlined" style="font-size: 0.875rem;">arrow_forward</span>
                         </a>
                     </div>
                 </section>
             </div>
 
             <!-- Right Column -->
-            <div class="lg:col-span-2 flex flex-col gap-8">
+            <div class="flex flex-col gap-8">
                 <!-- Primary Actions -->
-                <div class="bg-white dark:bg-[#1C2834] rounded-xl shadow-sm">
-                    <h2 class="text-gray-900 dark:text-white text-lg font-bold p-4 border-b border-gray-200 dark:border-white/10">
-                        Primary Actions
-                    </h2>
-                    <div class="p-4 flex flex-wrap gap-3">
+                <div class="card">
+                    <h2 class="card-title card-header">Primary Actions</h2>
+                    <div class="card-body action-buttons">
                         <form method="post">
                             <button asp-page-handler="Start" asp-route-id="@Model.Instance.Id"
-                                    class="flex items-center gap-2 h-10 px-4 rounded-lg bg-green-600/10 text-green-600 hover:bg-green-600/20 disabled:opacity-50 disabled:cursor-not-allowed"
+                                    class="btn-action btn-start"
                                     disabled="@(Model.Instance.DockerStatus == "running")">
-                                <span class="material-symbols-outlined text-xl">play_arrow</span>
-                                <span class="text-sm font-bold">Start</span>
+                                <span class="material-symbols-outlined" style="font-size: 1.25rem;">play_arrow</span>
+                                <span>Start</span>
                             </button>
                         </form>
                         <form method="post">
                             <button asp-page-handler="Stop" asp-route-id="@Model.Instance.Id"
-                                    class="flex items-center gap-2 h-10 px-4 rounded-lg bg-red-600/10 text-red-600 hover:bg-red-600/20 disabled:opacity-50 disabled:cursor-not-allowed"
+                                    class="btn-action btn-stop"
                                     disabled="@(Model.Instance.DockerStatus == "stopped")">
-                                <span class="material-symbols-outlined text-xl">stop</span>
-                                <span class="text-sm font-bold">Stop</span>
+                                <span class="material-symbols-outlined" style="font-size: 1.25rem;">stop</span>
+                                <span>Stop</span>
                             </button>
                         </form>
                         <form method="post">
                             <button asp-page-handler="Restart" asp-route-id="@Model.Instance.Id"
-                                    class="flex items-center gap-2 h-10 px-4 rounded-lg bg-yellow-500/10 text-yellow-600 hover:bg-yellow-500/20 disabled:opacity-50 disabled:cursor-not-allowed"
+                                    class="btn-action btn-restart"
                                     disabled="@(Model.Instance.DockerStatus == "restarted" || Model.Instance.DockerStatus == "stopped")">
-                                <span class="material-symbols-outlined text-xl">refresh</span>
-                                <span class="text-sm font-bold">Restart</span>
+                                <span class="material-symbols-outlined" style="font-size: 1.25rem;">refresh</span>
+                                <span>Restart</span>
                             </button>
                         </form>
                     </div>
                 </div>
-                
-                <!--#region MEJORAS  -->
-                <!-- WP-CLI -->
-                @* <div class="bg-white dark:bg-[#1C2834] rounded-xl shadow-sm"> *@
-                @*     <h2 class="text-gray-900 dark:text-black text-lg font-bold p-4 border-b border-gray-200 dark:border-white/10"> *@
-                @*         WP-CLI Access</h2> *@
-                @*     <div class="p-4"> *@
-                @*         <div class="bg-black rounded-lg p-4 font-mono text-sm text-green-400 h-48 overflow-y-auto mb-4"> *@
-                @*             <p>&gt; wp plugin list</p> *@
-                @*             <p>+-------------------+----------+--------+---------+</p> *@
-                @*             <p>| name | status | update | version |</p> *@
-                @*             <p>+-------------------+----------+--------+---------+</p> *@
-                @*             <p>| akismet | active | none | 5.0.2 |</p> *@
-                @*             <p>| classic-editor | inactive | none | 1.6.2 |</p> *@
-                @*             <p>| woocommerce | active | none | 7.3.0 |</p> *@
-                @*             <p>+-------------------+----------+--------+---------+</p> *@
-                @*         </div> *@
-                @*         <div class="flex items-center gap-2"> *@
-                @*             <span class="text-gray-400 dark:text-gray-500 font-mono text-sm">&gt;</span> *@
-                @*             <input *@
-                @*                 class="flex-1 bg-gray-100 dark:bg-[#101922] border-gray-300 dark:border-gray-700 rounded-md h-10 px-3 text-sm focus:ring-primary focus:border-primary" *@
-                @*                 placeholder="Enter WP-CLI command..." type="text"/> *@
-                @*             <button class="h-10 px-4 rounded-lg bg-primary text-white text-sm font-bold">Run</button> *@
-                @*         </div> *@
-                @*     </div> *@
-                @* </div> *@
-                <!--#endregion -->
-                
+
                 <!-- Danger Zone -->
-                <div class="border border-red-500/30 dark:border-red-500/50 rounded-xl p-4">
-                    <h3 class="text-red-700 dark:text-red-400 text-lg font-bold">Danger Zone</h3>
-                    <p class="text-red-600/80 dark:text-red-400/80 text-sm mt-1">These actions are permanent and cannot be undone.</p>
+                <div class="danger-zone">
+                    <h3 class="danger-title">Danger Zone</h3>
+                    <p class="danger-description">These actions are permanent and cannot be undone.</p>
 
                     <form method="post" asp-page-handler="Delete"
                           onsubmit="return confirm('¿Estás seguro que quieres eliminar esta instancia? Esta acción no se puede deshacer.');"
-                          class="mt-4 flex justify-between items-center">
-                        <input type="hidden" name="id" value="@Model.Instance?.Id" />
+                          class="danger-action">
+                        <input type="hidden" name="id" value="@Model.Instance?.Id"/>
                         <div>
-                            <p class="text-gray-900 dark:text-white font-medium">Delete this instance</p>
-                            <p class="text-gray-500 dark:text-gray-400 text-sm">Once deleted, it's gone forever.</p>
+                            <p class="danger-action-text">Delete this instance</p>
+                            <p class="danger-action-description">Once deleted, it's gone forever.</p>
                         </div>
-                        <button type="submit"
-                                class="h-10 px-4 rounded-lg bg-red-600 text-white text-sm font-bold hover:bg-red-700">
-                            Delete Instance
-                        </button>
+                        <button type="submit" class="btn-danger">Delete Instance</button>
                     </form>
                 </div>
             </div>
