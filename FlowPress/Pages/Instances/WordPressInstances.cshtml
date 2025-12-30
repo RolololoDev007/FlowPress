@@ -2,7 +2,7 @@
 @model FlowPress.Pages.Instances.WordPressInstances
 
 @{
-    ViewData["Title"] = "Instances";
+    ViewData["Title"] = "Instancias";
     Layout = "_Layout";
 }
 
@@ -18,7 +18,7 @@
                         </p>
                         <a class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 bg-blue-500 px-4 bg-primary text-white text-sm font-bold leading-normal tracking-[0.015em] hover:bg-primary/90 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-100"
                             href="/create">
-                            <span class="truncate">+ Deploy New Instance</span>
+                            <span class="truncate">+ Crear nueva instancia</span>
                         </a>
                     </div>
 
@@ -29,16 +29,16 @@
                                 <span class="material-symbols-outlined text-gray-400 dark:text-gray-500">search</span>
                             </div>
                             <input class="w-full sm:w-80 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-black dark:text-white pl-10 pr-4 py-2 focus:ring-2 focus:ring-primary focus:border-primary"
-                                placeholder="Search by name or subdomain..." type="text"/>
+                                placeholder="Buscar por nombre o dominio..." type="text"/>
                         </div>
                         <div class="flex gap-2">
                             <button class="flex items-center gap-2 p-2 rounded-lg text-gray-600 dark:text-gray-300 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
                                 <span class="material-symbols-outlined text-base">filter_list</span>
-                                <span class="text-sm">Filters</span>
+                                <span class="text-sm">Filtrar</span>
                             </button>
                             <button class="flex items-center gap-2 p-2 rounded-lg text-gray-600 dark:text-gray-300 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
                                 <span class="material-symbols-outlined text-base">swap_vert</span>
-                                <span class="text-sm">Sort</span>
+                                <span class="text-sm">Ordenar</span>
                             </button>
                         </div>
                     </div>
@@ -50,16 +50,16 @@
                                 <thead>
                                 <tr class="bg-gray-50 dark:bg-[#1c2127]">
                                     <th class="px-6 py-4 text-left text-gray-600 dark:text-white text-xs font-medium uppercase tracking-wider">
-                                        Site Name
+                                        Nombre del sitio
                                     </th>
                                     <th class="px-6 py-4 text-left text-gray-600 dark:text-white text-xs font-medium uppercase tracking-wider">
-                                        Subdomain
+                                        Dominio
                                     </th>
                                     <th class="px-6 py-4 text-left text-gray-600 dark:text-white text-xs font-medium uppercase tracking-wider">
-                                        Status
+                                        Estado
                                     </th>
                                     <th class="px-6 py-4 text-left text-gray-600 dark:text-white text-xs font-medium uppercase tracking-wider">
-                                        Actions
+                                        Acciones
                                     </th>
                                 </tr>
                                 </thead>

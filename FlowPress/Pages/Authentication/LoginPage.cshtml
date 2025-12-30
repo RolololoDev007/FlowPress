@@ -1,7 +1,7 @@
 ﻿@page "/login"
 @model FlowPress.Pages.Authentication.LoginPage
 @{
-    ViewData["Title"] = "Login";
+    ViewData["Title"] = "Iniciar Sesión";
     Layout = "_Layout";
 }
 
@@ -14,15 +14,15 @@
     <div class="form-container">
         <main class="form-card">
             <div class="form-header">
-                <p class="form-title">Log in to your account</p>
-                <p class="form-subtitle">Enter your credentials to access your dashboard</p>
+                <p class="form-title">Iniciar sesión en su cuenta</p>
+                <p class="form-subtitle">Introduzca tus credenciales para acceder a tu panel de control</p>
             </div>
 
             <div class="flex flex-col gap-6">
                 <label class="flex flex-col">
-                    <p class="form-label">Email Address</p>
+                    <p class="form-label">Correo electrónico</p>
                     <div class="input-group">
-                        <input asp-for="LoginModel.Email" class="form-input" placeholder="Enter your email address"
+                        <input asp-for="LoginModel.Email" class="form-input" placeholder="Introduzca su correo electrónico"
                                type="email"/>
                         <div class="input-icon">
                             <span class="material-symbols-outlined" style="font-size: 20px;">person</span>
@@ -31,9 +31,9 @@
                 </label>
 
                 <label class="flex flex-col">
-                    <p class="form-label">Password</p>
+                    <p class="form-label">Contraseña</p>
                     <div class="input-group">
-                        <input asp-for="LoginModel.Password" class="form-input" placeholder="Enter your password"
+                        <input asp-for="LoginModel.Password" class="form-input" placeholder="Introduzca su contraseña"
                                type="password"/>
                         <div class="input-icon">
                             <span class="material-symbols-outlined" style="font-size: 20px;">lock</span>
@@ -41,7 +41,7 @@
                     </div>
                 </label>
 
-                <button type="submit" class="btn-primary">Log In</button>
+                <button type="submit" class="btn-primary">Iniciar Sesión</button>
             </div>
 
             <p class="mt-4 form-subtitle">@ViewData["Message"]</p>

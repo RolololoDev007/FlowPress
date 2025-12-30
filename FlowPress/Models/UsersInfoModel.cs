@@ -15,6 +15,6 @@ public class UsersInfoModel : BaseModel
     public string id { get; set; } = string.Empty;
 
     [Column("username")]
-    [Required(ErrorMessage = "Username required")]
+    [Required(ErrorMessage = "El nombre de usuario es obligatorio.")]
     public string username { get; set; } = string.Empty;
 }

@@ -2,7 +2,7 @@
 @model RegisterPage
 
 @{
-    ViewData["Title"] = "Register";
+    ViewData["Title"] = "Registrarse";
     Layout = "_Layout";
 }
 
@@ -19,15 +19,16 @@
     <div class="form-container">
         <main class="form-card">
             <div class="form-header">
-                <p class="form-title">Create Your Account</p>
-                <p class="form-subtitle">Manage all your WordPress sites from one place.</p>
+                <p class="form-title">Cree su cuenta</p>
+                <p class="form-subtitle">Gestiona todos tus sitios WordPress desde un solo lugar.</p>
             </div>
             <div class="flex flex-col gap-6">
                 <!-- Username -->
                 <label class="flex flex-col">
-                    <p class="form-label">Username</p>
+                    <p class="form-label">Nombre de Usuario</p>
                     <div class="input-group">
-                        <input asp-for="RegisterModel.Username" class="form-input" placeholder="Enter your username"
+                        <input asp-for="RegisterModel.Username" class="form-input"
+                               placeholder="Introduzca un nombre de usuario"
                                type="text"/>
                         <div class="input-icon">
                             <span class="material-symbols-outlined" style="font-size: 20px;">person</span>
@@ -37,9 +38,10 @@
                 </label>
                 <!-- Email -->
                 <label class="flex flex-col">
-                    <p class="form-label">Email Address</p>
+                    <p class="form-label">Correo Electrónico</p>
                     <div class="input-group">
-                        <input asp-for="RegisterModel.Email" class="form-input" placeholder="Enter your email address"
+                        <input asp-for="RegisterModel.Email" class="form-input"
+                               placeholder="Introduzca su correo electrónico"
                                type="email"/>
                         <div class="input-icon">
                             <span class="material-symbols-outlined" style="font-size: 20px;">email</span>
@@ -49,54 +51,56 @@
                 </label>
                 <!-- Password -->
                 <label class="flex flex-col">
-                    <p class="form-label">Password</p>
+                    <p class="form-label">Contraseña</p>
                     <div class="input-group">
-                        <input asp-for="RegisterModel.Password" class="form-input" placeholder="Create a password"
+                        <input asp-for="RegisterModel.Password" class="form-input"
+                               placeholder="Introduzca una contraseña"
                                type="password"/>
                         <button type="button" id="togglePassword" class="input-icon">
                             <span class="material-symbols-outlined" style="font-size: 20px;">visibility</span>
                         </button>
                     </div>
+                    <span asp-validation-for="RegisterModel.Password" class="validation-error"></span>
                 </label>
                 <!-- Confirm Password -->
                 <label class="flex flex-col">
-                    <p class="form-label">Confirm Password</p>
+                    <p class="form-label">Confirmar Contraseña</p>
                     <div class="input-group">
                         <input asp-for="RegisterModel.ConfirmPassword" class="form-input"
-                               placeholder="Confirm your password" type="password"/>
+                               placeholder="Confirme su contraseña" type="password"/>
                         <button type="button" id="toggleConfirmPassword" class="input-icon">
                             <span class="material-symbols-outlined" style="font-size: 20px;">visibility</span>
                         </button>
                     </div>
                     <span asp-validation-for="RegisterModel.ConfirmPassword" class="validation-error"></span>
-                </label>
-                <span asp-validation-for="RegisterModel.Password" class="validation-error"></span>
-                <div class="password-requirements">
-                    <p class="validation-error">Password must be at least 6 characters long.</p>
-                    <div class="password-strength">
-                        <div class="password-strength-bg">
-                            <div id="passwordStrengthBar" class="password-strength-bar"
-                                 style="width: 0%;"></div>
+                    <div class="password-requirements">
+                        <p class="validation-error">La contraseña debe tener al menos 6 caracteres.</p>
+                        <div class="password-strength">
+                            <div class="password-strength-bg">
+                                <div id="passwordStrengthBar" class="password-strength-bar"
+                                     style="width: 0%;"></div>
+                            </div>
+                            <span id="passwordStrengthText" class="password-strength-text"> </span>
                         </div>
-                        <span id="passwordStrengthText" class="password-strength-text"> </span>
                     </div>
-                </div>
+                </label>
+
                 <!-- Register Button -->
                 <button type="submit" class="btn-primary" disabled="@Model.IsRegistering">
                     @if (Model.IsRegistering)
                     {
-                        <text>Registering...</text>
+                        <text>Registrando...</text>
                     }
                     else
                     {
-                        <text>Register</text>
+                        <text>Registrarse</text>
                     }
                 </button>
             </div>
             <!-- Sign In Link -->
             <p class="form-subtitle text-center" style="margin-top: 1rem;">
-                Already have an account?
-                <a class="text-link" asp-page="/Login">Sign In</a>
+                ¿Ya tienes una cuenta?
+                <a class="text-link" asp-page="/Login">Iniciar sesión</a>
             </p>
             <!-- General messages -->
             @if (!string.IsNullOrEmpty(Model.Message))

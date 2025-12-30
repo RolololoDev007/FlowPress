@@ -2,7 +2,7 @@
 @model WordPressCreateInstance
 
 @{
-    ViewData["Title"] = "Create Instance";
+    ViewData["Title"] = "Crear Instancia";
     Layout = "_Layout";
 }
 
@@ -16,43 +16,44 @@
             <div class="breadcrumb">
                 <a class="breadcrumb-link" href="/instances">Instances</a>
                 <span class="breadcrumb-link">/</span>
-                <span class="breadcrumb-current">Launch New Site</span>
+                <span class="breadcrumb-current">Crear nuevo sitio</span>
             </div>
 
             <div class="page-header">
-                <h1 class="page-title">Launch a New WordPress Instance</h1>
-                <p class="page-subtitle">Fill in the details below to get your new site up and running.</p>
+                <h1 class="page-title">Lanza una Nueva Instancia de WordPress</h1>
+                <p class="page-subtitle">Rellena los detalles a continuación para poner en marcha tu nuevo sitio.</p>
             </div>
 
             <div class="form-card">
                 <form method="post" class="form-container">
                     <label class="flex flex-col">
-                        <p class="form-label">Site Name</p>
+                        <p class="form-label">Nombre del sitio</p>
                         <input asp-for="InstancesModel.SiteName"
                                class="form-input"
-                               placeholder="My Awesome Blog"
+                               placeholder="Mi sitio WordPress"
                                type="text"/>
                         <span asp-validation-for="InstancesModel.SiteName" class="validation-error"></span>
                     </label>
 
                     <label class="flex flex-col">
-                        <p class="form-label">Site Address</p>
+                        <p class="form-label">Dirección del Sitio</p>
                         <div class="input-group">
                             <input asp-for="InstancesModel.SiteAddress"
                                    class="input-group-input"
-                                   placeholder="Enter your site address"/>
+                                   placeholder="Introduzca la dirección de tu sitio"/>
                             <div class="input-group-suffix">
                                 <span style="font-size: 16px;">flowpress.site</span>
                             </div>
                         </div>
                         <span asp-validation-for="InstancesModel.SiteAddress" class="validation-error"></span>
+                        @* ROLO: Aquí se debería mostrar si el dominio está disponible o no *@
                         <p class="success-message">
                             <span class="material-symbols-outlined" style="font-size: 1rem;">check_circle</span>
-                            Subdomain is available!
+                            ¡Dominio disponible!
                         </p>
                     </label>
                     <div style="padding-top: 1rem;">
-                        <button type="submit" class="btn-submit">Launch Site</button>
+                        <button type="submit" class="btn-submit">Lanzar Sitio</button>
                     </div>
                 </form>
             </div>

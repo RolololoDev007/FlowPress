@@ -18,11 +18,11 @@ public class InstancesModel : BaseModel
     public string IdUser { get; set; } = string.Empty;
     
     [Column("sitename")]
-    [Required(ErrorMessage = "Site name required")]
+    [Required(ErrorMessage = "Nombre del sitio obligatorio")]
     public string SiteName { get; set; } = string.Empty;
     
     [Column("siteaddress")]
-    [Required(ErrorMessage = "Site address required")]
+    [Required(ErrorMessage = "Dirección del sitio obligatorio")]
     public string SiteAddress { get; set; } = string.Empty;
     
     [Column("dockerinstancenamewp")]
