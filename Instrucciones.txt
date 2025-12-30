@@ -27,22 +27,15 @@ Maquina Ubuntu
 	systemctl status nginx
 	
 4- Instalar Cloudflared y configurarlo
-	apt update && apt upgrade -y
-	apt install -y curl gnupg lsb-release
-	sudo mkdir -p --mode=0755 /usr/share/keyrings
-	curl -fsSL https://pkg.cloudflare.com/cloudflare-main.gpg | \
-	sudo tee /usr/share/keyrings/cloudflare-main.gpg >/dev/null
-	echo "deb [signed-by=/usr/share/keyrings/cloudflare-main.gpg] \
-	https://pkg.cloudflare.com/ $(lsb_release -cs) main" | \
-	sudo tee /etc/apt/sources.list.d/cloudflare.list
-	sudo apt update
-	sudo apt install -y cloudflared
+	wget https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64
+	chmod +x cloudflared-linux-amd64
+	sudo mv cloudflared-linux-amd64 /usr/local/bin/cloudflared
 	cloudflared --version
 
 	cloudflared tunnel login
-	cloudflared tunnel create "nombretunnel"
+	cloudflared tunnel create "flowpress_prx"
 	nano ~/.cloudflared/config.yml
-		tunnel: nombretunnel
+		tunnel: flowpress_prx
 		credentials-file: /etc/cloudflared/flowpress.json
 
 		ingress:
@@ -50,8 +43,12 @@ Maquina Ubuntu
 			service: http://localhost:80
 		  - service: http_status:404
 
-	cloudflared tunnel route dns "nombretunnel" midominio.com
-	cloudflared tunnel run "nombretunnel"
+	cloudflared tunnel route dns "flowpress_prx" flowpress.site
+
+	4.1- Creamos la carpeta de las credenciales y movemos dichas credenciales a la carpeta en cuestión
+	mkdir -p /etc/cloudflared
+	mv ~/.cloudflared/<nombre-archivo-cred>.json /etc/cloudflared/flowpress.json
+	cloudflared tunnel run "flowpress_prx"
 	cloudflared service install
 	
 5- Instalar .NET Runtime
