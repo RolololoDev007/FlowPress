@@ -169,6 +169,20 @@ namespace FlowPress.Services
             return result;
         }
         
+        // INFO
+        /// Si hay un registro que contenga el mismo siteaddress que el enviado,
+        /// lo devolvera para a continuación hacer una comprobación
+        public async Task<InstancesModel?> SelectInstancesSiteAddressAsync(string siteAddressToCheck)
+        {
+            // Obtener los registros de la instancia
+            var result = await _client
+                .From<InstancesModel>()
+                .Where(i => i.SiteAddress == siteAddressToCheck)
+                .Get();
+        
+            return result.Models.FirstOrDefault();
+        }
+        
         #endregion
 
         #region ----------- UPDATE REGISTROS ----------

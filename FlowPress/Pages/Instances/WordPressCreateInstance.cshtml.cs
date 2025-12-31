@@ -22,6 +22,16 @@ public class WordPressCreateInstance(SupabaseService supabaseService) : PageMode
         if (!ModelState.IsValid)
             return Page();
 
+        // Verificar si el SiteAddress ya existe
+        var siteAddressToCheck = InstancesModel.SiteAddress.ToLower() + ".flowpress.site";
+        var existingInstances = await supabaseService.SelectInstancesSiteAddressAsync(siteAddressToCheck);
+
+        if (existingInstances != null)
+        {
+            ModelState.AddModelError("InstancesModel.SiteAddress",
+                "Esta dirección ya está en uso.");
+            return Page();
+        }
         // Obtener el UserId desde los claims
         var userId = User.FindFirstValue("userid");
 
