@@ -27,28 +27,31 @@ Maquina Ubuntu
 	systemctl status nginx
 	
 4- Instalar Cloudflared y configurarlo
-	wget https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64
-	chmod +x cloudflared-linux-amd64
-	sudo mv cloudflared-linux-amd64 /usr/local/bin/cloudflared
+	curl -fsSL https://pkg.cloudflare.com/cloudflare-main.gpg | sudo tee /usr/share/keyrings/cloudflare-main.gpg >/dev/null
+	echo "deb [signed-by=/usr/share/keyrings/cloudflare-main.gpg] https://pkg.cloudflare.com/cloudflared noble main" | sudo tee /etc/apt/sources.list.d/cloudflared.list
+	sudo apt update
+	sudo apt install cloudflared -y
+
 	cloudflared --version
 
 	cloudflared tunnel login
-	cloudflared tunnel create "flowpress_prx"
-	nano ~/.cloudflared/config.yml
-		tunnel: flowpress_prx
-		credentials-file: /etc/cloudflared/flowpress.json
+	cloudflared tunnel create flowpress-tunnel
+	cloudflared tunnel route dns flowpress-tunnel *.flowpress.site
+
+	nano ~/.cloudflared/config.yml  (HAY QUE IDENTARLO ANTES DE GUARDAR)
+		tunnel: flowpress-tunnel
+		credentials-file: /root/.cloudflared/<UUID>.json
 
 		ingress:
 		  - hostname: "*.flowpress.site"
 			service: http://localhost:80
 		  - service: http_status:404
 
-	cloudflared tunnel route dns "flowpress_prx" flowpress.site
 
 	4.1- Creamos la carpeta de las credenciales y movemos dichas credenciales a la carpeta en cuestión
 	mkdir -p /etc/cloudflared
 	mv ~/.cloudflared/<nombre-archivo-cred>.json /etc/cloudflared/flowpress.json
-	cloudflared tunnel run "flowpress_prx"
+	cloudflared tunnel run "flowpress-tunnel"
 	cloudflared service install
 	
 5- Instalar .NET Runtime
@@ -59,15 +62,53 @@ Maquina Ubuntu
 	apt update
 	apt install -y dotnet-runtime-9.0
 
+6- Instalar Supabase (BBDD)
+	# Get the code
+	git clone --depth 1 https://github.com/supabase/supabase
+
+	# Make your new supabase project directory
+	mkdir supabase-project
+
+	# Tree should look like this
+	# .
+	# ├── supabase
+	# └── supabase-project
+
+	# Copy the compose files over to your project
+	cp -rf supabase/docker/* supabase-project
+
+	# Copy the fake env vars
+	cp supabase/docker/.env.example supabase-project/.env
+
+	# Switch to your project directory
+	cd supabase-project
+	
+	# Generate and apply all secrets at once
+	sh ./utils/generate-keys.sh
+	
+	# Pull the latest images
+	docker compose pull
 
 Maquina Windows
 1- Compilar proyecto Worker
 	dotnet publish Worker -c Release -r linux-x64 --self-contained false
+
 2- Pasar Worker a Ubuntu
 	scp -r Worker/bin/Release/net9.0/linux-x64/publish/* dockeruser@20.90.161.35:/flowpressworker/ (Maquina Azure)
 
 
 Maquina Ubuntu
-6- Dirigirnos a la carpeta en la que hemos copiado el Worker
-7- Ejecutar el Worker 
+8- Configurar nGinx
+	rm /etc/nginx/sites-enabled/default
+	chown -R dockeruser:www-data /etc/nginx/sites-available
+	chmod -R 775 /etc/nginx/sites-available
+	chown -R root:www-data /etc/nginx/sites-enabled
+	chmod -R 775 /etc/nginx/sites-enabled
+	usermod -aG www-data dockeruser
+	nginx -t
+	systemctl reload nginx
+
+9- Dirigirnos a la carpeta en la que hemos copiado el Worker
+
+10- Ejecutar el Worker 
 	dotnet Worker.dll
