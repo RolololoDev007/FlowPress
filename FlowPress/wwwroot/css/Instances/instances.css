@@ -1,0 +1,321 @@
+.page-wrapper {
+    position: relative;
+    min-height: 100vh;
+    width: 100%;
+    overflow-x: hidden;
+}
+
+.layout-container {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.layout-content {
+    width: 100%;
+    max-width: 80rem;
+    margin: 0 auto;
+    padding: 1.25rem;
+}
+
+@media (min-width: 640px) {
+    .layout-content {
+        padding: 1.5rem;
+    }
+}
+
+.page-header {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 1rem;
+}
+
+.page-title {
+    font-size: 2.25rem;
+    font-weight: 900;
+    line-height: 1.2;
+    letter-spacing: -0.033em;
+    color: #111827;
+}
+
+.create-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 2.5rem;
+    padding: 0 1rem;
+    border-radius: 0.5rem;
+    background-color: #3b82f6;
+    color: white;
+    font-size: 0.875rem;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.create-button:hover {
+    background-color: #2563eb;
+}
+
+.toolbar {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    padding: 1rem;
+}
+
+@media (min-width: 640px) {
+    .toolbar {
+        flex-direction: row;
+        justify-content: space-between;
+    }
+}
+
+.search-wrapper {
+    position: relative;
+}
+
+.search-icon {
+    position: absolute;
+    left: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #9ca3af;
+}
+
+.search-input {
+    width: 100%;
+    padding: 0.5rem 1rem 0.5rem 2.5rem;
+    border-radius: 0.5rem;
+    border: 1px solid #d1d5db;
+}
+
+.filter-buttons {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.toolbar-button {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem;
+    border-radius: 0.5rem;
+    border: 1px solid #d1d5db;
+    background-color: white;
+    font-size: 0.875rem;
+    cursor: pointer;
+}
+
+.toolbar-button:hover {
+    background-color: #f3f4f6;
+}
+
+.table-container {
+    padding: 1rem;
+}
+
+.instances-table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 0.75rem;
+    overflow: hidden;
+    box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+}
+
+.instances-table thead {
+    background-color: #eaeaea;
+}
+
+.instances-table thead tr:hover {
+    background-color: transparent;
+    cursor: default;
+}
+
+.instances-table thead tr:hover td,
+.instances-table thead tr:hover th {
+    background-color: transparent;
+}
+
+.instances-table th {
+    padding: 1rem;
+    text-align: left;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    color: #6b7280;
+}
+
+.instances-table td {
+    padding: 1rem;
+    font-size: 0.875rem;
+    color: #111827;
+}
+
+.instances-table tr:hover {
+    background-color: #eef2ff;
+}
+
+.status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    font-weight: 500;
+    font-size: 0.875rem;
+}
+
+.status-dot {
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 50%;
+}
+
+.status-running {
+    background-color: #dcfce7;
+    color: #166534;
+}
+
+.status-running .status-dot {
+    background-color: #22c55e;
+}
+
+.status-stopped {
+    background-color: #fee2e2;
+    color: #991b1b;
+}
+
+.status-stopped .status-dot {
+    background-color: #ef4444;
+}
+
+.status-pending {
+    background-color: #fef9c3;
+    color: #854d0e;
+}
+
+.status-pending .status-dot {
+    background-color: #eab308;
+}
+
+.status-restarted {
+    background-color: #fed7aa;
+    color: #9a3412;
+}
+
+.status-restarted .status-dot {
+    background-color: #f97316;
+}
+
+.status-unknown {
+    background-color: #f3f4f6;
+    color: #374151;
+}
+
+.status-unknown .status-dot {
+    background-color: #9ca3af;
+}
+
+.actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.action-button {
+    padding: 0.5rem;
+    border-radius: 9999px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    color: #6b7280;
+}
+
+.action-button:hover {
+    background-color: #e5e7eb;
+}
+
+/* ============================= */
+/* 🌙 DARK MODE — MISMO ESTILO QUE INSTANCEINFO */
+/* ============================= */
+
+@media (prefers-color-scheme: dark) {
+
+    .page-wrapper {
+        background-color: #121418;
+    }
+
+    .layout-container {
+        background-color: #121418;
+    }
+
+    .page-title {
+        color: white;
+    }
+
+    .search-input {
+        background-color: #1C2834;
+        border-color: rgba(255, 255, 255, 0.1);
+        color: white;
+    }
+
+    .search-input::placeholder {
+        color: #9dabb9;
+    }
+
+    .search-icon {
+        color: #9dabb9;
+    }
+
+    .toolbar-button {
+        background-color: #1C2834;
+        border-color: rgba(255, 255, 255, 0.1);
+        color: #cbd5e1;
+    }
+
+    .toolbar-button:hover {
+        background-color: #233244;
+    }
+
+    .instances-table {
+        background-color: #1C2834;
+        border-color: rgba(255, 255, 255, 0.1);
+    }
+
+    .instances-table thead {
+        background-color: #0f172a;
+    }
+
+    .instances-table th {
+        color: #9dabb9;
+    }
+
+    .instances-table td {
+        color: white;
+    }
+
+    .instances-table tr:hover {
+        background-color: #233244;
+    }
+
+    .action-button {
+        color: #9ca3af;
+    }
+
+    .action-button:hover {
+        background-color: #233244;
+        color: #3b82f6;
+    }
+
+    .status-unknown {
+        background-color: #334155;
+        color: #e5e7eb;
+    }
+
+    .status-unknown .status-dot {
+        background-color: #94a3b8;
+    }
+}

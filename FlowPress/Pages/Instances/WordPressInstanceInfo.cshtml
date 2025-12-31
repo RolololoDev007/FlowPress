@@ -46,7 +46,7 @@
                     <div class="card-body details-grid">
                         <div class="detail-item">
                             <p class="detail-label">Dirección del sitio</p>
-                            <a class="detail-link" href="https://@($"{Model.Instance?.SiteAddress}")">
+                            <a class="detail-link" href="https://@($"{Model.Instance?.SiteAddress}")" target="_blank">
                                 @($"{Model.Instance?.SiteAddress}")
                             </a>
                         </div>
@@ -88,7 +88,7 @@
                         <form method="post">
                             <button asp-page-handler="Start" asp-route-id="@Model.Instance.Id"
                                     class="btn-action btn-start"
-                                    disabled="@(Model.Instance.DockerStatus == "running" || Model.Instance.DockerStatus == "pending" || Model.Instance.DockerStatus == "restarted"))">
+                                    disabled="@(Model.Instance?.DockerStatus is not "stopped")">
                                 <span class="material-symbols-outlined" style="font-size: 1.25rem;">play_arrow</span>
                                 <span>Iniciar</span>
                             </button>
@@ -96,7 +96,7 @@
                         <form method="post">
                             <button asp-page-handler="Stop" asp-route-id="@Model.Instance.Id"
                                     class="btn-action btn-stop"
-                                    disabled="@(Model.Instance.DockerStatus == "stopped" || Model.Instance.DockerStatus == "pending" || Model.Instance.DockerStatus == "restarted")">
+                                    disabled="@(Model.Instance.DockerStatus is not "running")">
                                 <span class="material-symbols-outlined" style="font-size: 1.25rem;">stop</span>
                                 <span>Apagar</span>
                             </button>
@@ -104,19 +104,17 @@
                         <form method="post">
                             <button asp-page-handler="Restart" asp-route-id="@Model.Instance.Id"
                                     class="btn-action btn-restart"
-                                    disabled="@(Model.Instance.DockerStatus == "stopped" || Model.Instance.DockerStatus == "pending" || Model.Instance.DockerStatus == "restarted")">
+                                    disabled="@(Model.Instance?.DockerStatus is not "running")">
                                 <span class="material-symbols-outlined" style="font-size: 1.25rem;">refresh</span>
                                 <span>Reiniciar</span>
                             </button>
                         </form>
                     </div>
                 </div>
-
                 <!-- Danger Zone -->
                 <div class="danger-zone">
                     <h3 class="danger-title">Zona de Peligro</h3>
                     <p class="danger-description">Estas acciones son permanentes y no se pueden deshacer.</p>
-
                     <form method="post" asp-page-handler="Delete"
                           onsubmit="return confirm('¿Estás seguro que quieres eliminar esta instancia? Esta acción no se puede deshacer.');"
                           class="danger-action">
@@ -124,8 +122,17 @@
                         <div>
                             <p class="danger-action-text">Eliminar esta instancia</p>
                             <p class="danger-action-description">Una vez eliminada, desaparecerá para siempre.</p>
+                            @if (Model.Instance?.DockerStatus != "stopped")
+                            {
+                                <p class="text-yellow-600 dark:text-yellow-400 text-sm mt-2">
+                                    ⚠️ Debes apagar la instancia antes de eliminarla.
+                                </p>
+                            }
                         </div>
-                        <button type="submit" class="btn-danger">Eliminar Instancia</button>
+                        <button type="submit" class="btn-action btn-danger"
+                                disabled="@(Model.Instance?.DockerStatus != "stopped")">
+                            Eliminar Instancia
+                        </button>
                     </form>
                 </div>
             </div>

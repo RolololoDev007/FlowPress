@@ -68,19 +68,33 @@ public class WordPressInstanceInfo(SupabaseService supabaseService) : PageModel
     /// para ejecutar los comandos necesarios.
     private async Task DockerCommandsAsync(string dockerCommand)
     {
+        /// ROLO Maquina Azure
+        // var process = new Process
+        // {
+        //     StartInfo = new ProcessStartInfo
+        //     {
+        //         FileName = "ssh",
+        //         Arguments = $"dockeruser@20.90.161.35 \"docker {dockerCommand}\"",
+        //         RedirectStandardOutput = true,
+        //         RedirectStandardError = true,
+        //         UseShellExecute = false,
+        //         CreateNoWindow = true
+        //     }
+        // };
+
         var process = new Process
         {
             StartInfo = new ProcessStartInfo
             {
                 FileName = "ssh",
-                Arguments = $"dockeruser@20.90.161.35 \"docker {dockerCommand}\"",
+                Arguments = $"-i ~/.ssh/id_ed25519 -o StrictHostKeyChecking=no dockeruser@192.168.1.10 \"docker {dockerCommand}\"",
                 RedirectStandardOutput = true,
                 RedirectStandardError = true,
                 UseShellExecute = false,
                 CreateNoWindow = true
             }
         };
-
+        
         process.Start();
 
         var stdout = await process.StandardOutput.ReadToEndAsync();
@@ -91,7 +105,6 @@ public class WordPressInstanceInfo(SupabaseService supabaseService) : PageModel
         if (process.ExitCode != 0)
             throw new Exception($"Remote Docker error:\n{stderr}");
     }
-    
     // INFO 
     /// Con este metodo, rellenaremos el campo eliminated_at de la instancia a borrar.
     /// Además, paramos los contenedores docker asociados a la instancia.
@@ -121,5 +134,4 @@ public class WordPressInstanceInfo(SupabaseService supabaseService) : PageModel
         TempData["Message"] = "Instancia eliminada";
         return RedirectToPage("/Instances/WordPressInstances");
     }
-
 }

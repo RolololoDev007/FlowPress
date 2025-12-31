@@ -96,6 +96,9 @@ Maquina Windows
 2- Pasar Worker a Ubuntu
 	scp -r Worker/bin/Release/net9.0/linux-x64/publish/* dockeruser@20.90.161.35:/flowpressworker/ (Maquina Azure)
 
+3- Generar Claves SSH
+	ssh-keygen -t ed25519 -C "flowpress-app"
+	ssh-copy-id dockeruser@192.168.1.10
 
 Maquina Ubuntu
 8- Configurar nGinx
@@ -109,6 +112,5 @@ Maquina Ubuntu
 	systemctl reload nginx
 
 9- Dirigirnos a la carpeta en la que hemos copiado el Worker
-
 10- Ejecutar el Worker 
 	dotnet Worker.dll

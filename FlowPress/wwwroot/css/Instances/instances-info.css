@@ -220,7 +220,8 @@
 }
 
 .danger-zone {
-    border: 1px solid rgb(239 68 68 / 0.3);
+    background-color: #fae5e5;
+    border: 1px solid rgb(239 68 68 / 0.4);
     border-radius: 0.75rem;
     padding: 1rem;
 }
@@ -334,7 +335,8 @@
     }
 
     .danger-zone {
-        border-color: rgb(239 68 68 / 0.5);
+        background-color: #5b1111;
+        border-color: rgb(239 68 68 / 0.6);
     }
 
     .danger-title {
