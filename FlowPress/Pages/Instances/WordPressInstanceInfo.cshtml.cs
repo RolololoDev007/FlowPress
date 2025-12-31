@@ -87,7 +87,7 @@ public class WordPressInstanceInfo(SupabaseService supabaseService) : PageModel
             StartInfo = new ProcessStartInfo
             {
                 FileName = "ssh",
-                Arguments = $"-i ~/.ssh/id_ed25519 -o StrictHostKeyChecking=no dockeruser@192.168.1.10 \"docker {dockerCommand}\"",
+                Arguments = $"-i ~/.ssh/id_ed25519 -o StrictHostKeyChecking=no dockeruser@flowpressifp.duckdns.org \"docker {dockerCommand}\"",
                 RedirectStandardOutput = true,
                 RedirectStandardError = true,
                 UseShellExecute = false,
