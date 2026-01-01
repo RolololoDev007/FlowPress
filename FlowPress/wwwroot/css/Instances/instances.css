@@ -211,6 +211,15 @@
     background-color: #f97316;
 }
 
+.status-error {
+    background-color: #fee2e2;
+    color: #991b1b;
+}
+
+.status-error .status-dot {
+    background-color: #ef4444;
+}
+
 .status-unknown {
     background-color: #f3f4f6;
     color: #374151;
