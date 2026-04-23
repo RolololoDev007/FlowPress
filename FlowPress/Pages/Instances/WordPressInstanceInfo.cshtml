@@ -15,6 +15,10 @@
         "error" => ("bg-red-100 dark:bg-red-900/40", "bg-red-500", "text-red-800 dark:text-red-400", "Error"),
         _ => ("bg-gray-100 dark:bg-gray-900/40", "bg-gray-500", "text-gray-800 dark:text-gray-400", "Desconocido")
     };
+
+    var monitoringClasses = Model.Monitoring?.IsHealthy == true
+        ? ("monitoring-status-good", "monitoring-progress-good")
+        : ("monitoring-status-bad", "monitoring-progress-bad");
 }
 
 @section Styles{
@@ -73,24 +77,62 @@
                     <header class="card-header">
                         <h2 class="card-title">Monitoreo</h2>
                     </header>
-                    <div class="card-body" style="display: flex; flex-direction: column; gap: 1rem;">
+                    <div class="card-body monitoring-card-body">
                         <div class="monitoring-item">
                             <span class="monitoring-label">Estado actual</span>
-                            <span class="monitoring-value">Corriendo</span>
+                            <span class="monitoring-value @monitoringClasses.Item1">@Model.Monitoring?.StatusLabel</span>
                         </div>
                         <div>
                             <div class="monitoring-item progress-bar-wrapper">
-                                <span class="monitoring-label">Corriendo (30 dias)</span>
-                                <span class="detail-value">99.98%</span>
+                                <span class="monitoring-label">Salud actual</span>
+                                <span class="detail-value">@Model.Monitoring?.HealthScore%</span>
                             </div>
                             <div class="progress-bar-bg">
-                                <div class="progress-bar-fill" style="width: 99.98%"></div>
+                                <div class="progress-bar-fill @monitoringClasses.Item2" style="width: @(Model.Monitoring?.HealthScore ?? 0)%"></div>
                             </div>
                         </div>
-                        <a class="detail-link" href="#" style="display: flex; align-items: center; gap: 0.375rem;">
-                            <span>Ver Página de Estado Completa</span>
-                            <span class="material-symbols-outlined" style="font-size: 0.875rem;">arrow_forward</span>
-                        </a>
+                        <div class="monitoring-grid">
+                            <div class="detail-item">
+                                <p class="detail-label">Resumen</p>
+                                <p class="detail-value">@Model.Monitoring?.Summary</p>
+                            </div>
+                            <div class="detail-item">
+                                <p class="detail-label">Código HTTP</p>
+                                <p class="detail-value">@(Model.Monitoring?.StatusCode?.ToString() ?? "Sin respuesta")</p>
+                            </div>
+                            <div class="detail-item">
+                                <p class="detail-label">Tiempo de respuesta</p>
+                                <p class="detail-value">@(Model.Monitoring?.ResponseTimeMs is long ms ? $"{ms} ms" : "No disponible")</p>
+                            </div>
+                            <div class="detail-item">
+                                <p class="detail-label">Última comprobación</p>
+                                <p class="detail-value">@Model.Monitoring?.CheckedAt.ToLocalTime().ToString("dd/MM/yyyy HH:mm:ss")</p>
+                            </div>
+                            <div class="detail-item">
+                                <p class="detail-label">URL comprobada</p>
+                                @if (!string.IsNullOrWhiteSpace(Model.Monitoring?.CheckedUrl))
+                                {
+                                    <a class="detail-link" href="@Model.Monitoring.CheckedUrl" target="_blank">
+                                        @Model.Monitoring.CheckedUrl
+                                    </a>
+                                }
+                                else
+                                {
+                                    <p class="detail-value">No disponible</p>
+                                }
+                            </div>
+                        </div>
+                        <div class="monitoring-links">
+                            <a class="detail-link" asp-page="/Instances/WordPressInstanceInfo" asp-route-id="@instanceId">
+                                Volver a comprobar
+                            </a>
+                            @if (!string.IsNullOrWhiteSpace(Model.Instance?.SiteAddress))
+                            {
+                                <a class="detail-link" href="https://@Model.Instance.SiteAddress" target="_blank">
+                                    Abrir web
+                                </a>
+                            }
+                        </div>
                     </div>
                 </section>
             </div>

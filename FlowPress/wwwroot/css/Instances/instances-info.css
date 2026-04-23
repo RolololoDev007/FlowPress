@@ -141,6 +141,12 @@
     justify-content: space-between;
 }
 
+.monitoring-card-body {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
 .monitoring-label {
     color: #6b7280;
     font-size: 0.875rem;
@@ -167,6 +173,34 @@
     height: 0.5rem;
     background-color: #10b981;
     border-radius: 9999px;
+}
+
+.monitoring-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+}
+
+.monitoring-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.monitoring-status-good {
+    color: #10b981;
+}
+
+.monitoring-status-bad {
+    color: #dc2626;
+}
+
+.monitoring-progress-good {
+    background-color: #10b981;
+}
+
+.monitoring-progress-bad {
+    background-color: #dc2626;
 }
 
 .action-buttons {
@@ -273,6 +307,10 @@
     .details-grid {
         grid-template-columns: repeat(2, 1fr);
     }
+
+    .monitoring-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
 }
 
 @media (min-width: 1024px) {
@@ -332,6 +370,10 @@
 
     .progress-bar-bg {
         background-color: #475569;
+    }
+
+    .monitoring-status-bad {
+        color: #f87171;
     }
 
     .danger-zone {

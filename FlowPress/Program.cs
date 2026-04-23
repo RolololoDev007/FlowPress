@@ -5,6 +5,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // INFO Soporte para Razor Pages
 builder.Services.AddRazorPages();
+builder.Services.AddHttpClient();
 
 // Servicios
 builder.Services.AddScoped<SupabaseService>();
