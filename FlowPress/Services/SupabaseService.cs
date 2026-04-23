@@ -55,9 +55,9 @@ namespace FlowPress.Services
                 // Crear los claims (información que se guarda en la cookie)
                 var claims = new List<Claim>
                 {
-                    new Claim(ClaimTypes.Name, session.User.Email),
+                    new Claim(ClaimTypes.Name, session.User.Email ?? email),
                     new Claim("username", username),
-                    new Claim("userid", session.User.Id)
+                    new Claim("userid", session.User.Id ?? string.Empty)
                 };
                 var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
                 var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
@@ -116,6 +116,9 @@ namespace FlowPress.Services
         /// Devuelve el nombre del usuario autenticado.
         private async Task<string> SelectUsernameAsync(Session? session)
         {
+            if (session?.User?.Id == null)
+                return "Usuario";
+
             // Obtener el username desde la tabla UsersInfo
             var result = await _client
                 .From<UsersInfoModel>()
@@ -159,6 +162,8 @@ namespace FlowPress.Services
         /// Devuelve los registros/datos de la instancia seleccionada.
         public async Task<InstancesModel?> SelectInstanceByIdAsync(Guid id)
         {
+            await EnsureInitializedAsync();
+
             // Obtener los registros de la instancia
             var result = await _client
                 .From<InstancesModel>()
@@ -167,6 +172,26 @@ namespace FlowPress.Services
                 .Single();
 
             return result;
+        }
+
+        // INFO
+        /// Devuelve una instancia solo si pertenece al usuario autenticado.
+        public async Task<InstancesModel?> SelectOwnedInstanceByIdAsync(Guid id)
+        {
+            await EnsureInitializedAsync();
+
+            var userId = _httpContextAccessor.HttpContext?.User.FindFirst("userid")?.Value;
+            if (string.IsNullOrEmpty(userId))
+                return null;
+
+            var result = await _client
+                .From<InstancesModel>()
+                .Where(p => p.Id == id)
+                .Where(p => p.IdUser == userId)
+                .Where(p => p.EliminatedAt == null)
+                .Get();
+
+            return result.Models.FirstOrDefault();
         }
         
         // INFO
@@ -194,13 +219,16 @@ namespace FlowPress.Services
         {
             try
             {
-                await _client
+                await EnsureInitializedAsync();
+
+                var response = await _client
                     .From<InstancesModel>()
                     .Where(x => x.Id == id)
-                    .Set(x => x.EliminatedAt, DateTime.Now)
+                    .Set(x => x.EliminatedAt!, DateTime.UtcNow)
+                    .Set(x => x.DockerStatus, "deleting")
                     .Update();
 
-                return true;
+                return response != null;
             }
             catch (Exception ex)
             {
@@ -215,6 +243,8 @@ namespace FlowPress.Services
         {
             try
             {
+                await EnsureInitializedAsync();
+
                 await _client
                     .From<InstancesModel>()
                     .Where(x => x.Id == id)

@@ -7,7 +7,7 @@
 }
 
 @section Styles{
-    <link rel="stylesheet" href="~/css/instances/instances.css" asp-append-version="true"/>
+    <link rel="stylesheet" href="~/css/Instances/instances.css" asp-append-version="true"/>
 }
 
 <div class="page-wrapper">
@@ -44,7 +44,7 @@
                     </tr>
                     </thead>
                     <tbody>
-                    @foreach (var instance in Model.Instances)
+                    @foreach (var instance in Model.Instances ?? Enumerable.Empty<FlowPress.Models.InstancesModel>())
                     {
                         var statusDisplay = instance.DockerStatus switch
                         {

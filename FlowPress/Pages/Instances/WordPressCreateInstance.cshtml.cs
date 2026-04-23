@@ -43,7 +43,7 @@ public class WordPressCreateInstance(SupabaseService supabaseService) : PageMode
             var instanceId = await CrearInstancia(userId);
             return RedirectToPage("WordPressInstanceInfo", new { id = instanceId });
         }
-        catch (PostgrestException ex)
+        catch (PostgrestException)
         {
             ModelState.AddModelError(string.Empty, "Ha ocurrido un error al crear la instancia.");
             return Page();

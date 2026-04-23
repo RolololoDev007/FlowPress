@@ -4,6 +4,7 @@
 @{
     Layout = "_Layout";
     ViewData["Title"] = "Información de la Instancia";
+    var instanceId = Model.Instance?.Id;
 
     var statusClasses = Model.Instance?.DockerStatus switch
     {
@@ -38,6 +39,20 @@
                 </div>
             </div>
         </header>
+
+        @if (!string.IsNullOrWhiteSpace(Model.Message))
+        {
+            <div class="mb-6 rounded-xl border border-green-200 bg-green-50 px-4 py-3 text-green-800">
+                @Model.Message
+            </div>
+        }
+
+        @if (!string.IsNullOrWhiteSpace(Model.ErrorMessage))
+        {
+            <div class="mb-6 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-red-800">
+                @Model.ErrorMessage
+            </div>
+        }
 
         <div class="grid-layout">
             <!-- Left Column -->
@@ -86,24 +101,24 @@
                 <div class="card">
                     <h2 class="card-title card-header">Acciones Principales</h2>
                     <div class="card-body action-buttons">
-                        <form method="post">
-                            <button asp-page-handler="Start" asp-route-id="@Model.Instance.Id"
+                        <form method="post" asp-page-handler="Start" asp-route-id="@instanceId">
+                            <button type="submit"
                                     class="btn-action btn-start"
                                     disabled="@(Model.Instance?.DockerStatus is not "stopped")">
                                 <span class="material-symbols-outlined" style="font-size: 1.25rem;">play_arrow</span>
                                 <span>Iniciar</span>
                             </button>
                         </form>
-                        <form method="post">
-                            <button asp-page-handler="Stop" asp-route-id="@Model.Instance.Id"
+                        <form method="post" asp-page-handler="Stop" asp-route-id="@instanceId">
+                            <button type="submit"
                                     class="btn-action btn-stop"
-                                    disabled="@(Model.Instance.DockerStatus is not "running")">
+                                    disabled="@(Model.Instance?.DockerStatus is not "running")">
                                 <span class="material-symbols-outlined" style="font-size: 1.25rem;">stop</span>
                                 <span>Apagar</span>
                             </button>
                         </form>
-                        <form method="post">
-                            <button asp-page-handler="Restart" asp-route-id="@Model.Instance.Id"
+                        <form method="post" asp-page-handler="Restart" asp-route-id="@instanceId">
+                            <button type="submit"
                                     class="btn-action btn-restart"
                                     disabled="@(Model.Instance?.DockerStatus is not "running")">
                                 <span class="material-symbols-outlined" style="font-size: 1.25rem;">refresh</span>

@@ -13,7 +13,7 @@ builder.Services.AddScoped<SupabaseService>();
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>
     {
-        options.LoginPath = "/error";  // INFO Página a la que se redirige si no está autenticado 
+        options.LoginPath = "/login";  // INFO Página a la que se redirige si no está autenticado 
         options.LogoutPath = "/logout";
         options.ExpireTimeSpan = TimeSpan.FromHours(1); // INFO Duración de la cookie
     });

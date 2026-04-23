@@ -53,7 +53,10 @@ namespace FlowPress.Pages.Authentication
                 if (session != null && session.User != null)
                 {
                     Message = "✅ Registration successful!";
-                    await CrearUsername(session.User.Id);
+                    var userId = session.User.Id;
+                    if (!string.IsNullOrEmpty(userId))
+                        await CrearUsername(userId);
+
                     return RedirectToPage("LoginPage");
                 }
                 else
