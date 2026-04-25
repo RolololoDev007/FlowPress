@@ -24,6 +24,9 @@ public class InstancesModel : BaseModel
     [Column("siteaddress")]
     [Required(ErrorMessage = "Dirección del sitio obligatorio")]
     public string SiteAddress { get; set; } = string.Empty;
+
+    [Column("dockerscript")]
+    public string DockerScript { get; set; } = string.Empty;
     
     [Column("dockerinstancenamewp")]
     public string DockerInstanceNameWp { get; set; } = string.Empty;
@@ -32,7 +35,16 @@ public class InstancesModel : BaseModel
     public string DockerInstanceNameDb { get; set; } = string.Empty;
     
     [Column("status")]
-    public string DockerStatus { get; set; } = string.Empty;    
+    public string DockerStatus { get; set; } = string.Empty;
+
+    [Column("wpadminuser")]
+    public string WpAdminUser { get; set; } = string.Empty;
+
+    [Column("wpadminemail")]
+    public string WpAdminEmail { get; set; } = string.Empty;
+
+    [Column("provisioning_status")]
+    public string ProvisioningStatus { get; set; } = string.Empty;
     
     [Column("eliminated_at")]
     public DateTime? EliminatedAt { get; set; }

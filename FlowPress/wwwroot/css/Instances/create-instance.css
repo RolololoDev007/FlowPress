@@ -105,6 +105,36 @@
     margin-top: 0.25rem;
 }
 
+.validation-summary {
+    border: 1px solid #fecaca;
+    border-radius: 0.75rem;
+    background-color: #fef2f2;
+    color: #b91c1c;
+    padding: 0.875rem 1rem;
+    font-size: 0.875rem;
+}
+
+.validation-summary:empty {
+    display: none;
+}
+
+.form-section {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.section-title {
+    color: #111827;
+    font-size: 1rem;
+    font-weight: 700;
+}
+
+.section-description {
+    color: #6b7280;
+    font-size: 0.875rem;
+}
+
 .input-group {
     display: flex;
     width: 100%;
@@ -286,6 +316,20 @@
     }
 
     .password-hint {
+        color: #9ca3af;
+    }
+
+    .validation-summary {
+        border-color: #7f1d1d;
+        background-color: rgba(127, 29, 29, 0.22);
+        color: #fecaca;
+    }
+
+    .section-title {
+        color: white;
+    }
+
+    .section-description {
         color: #9ca3af;
     }
 

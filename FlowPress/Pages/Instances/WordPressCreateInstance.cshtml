@@ -26,27 +26,73 @@
 
             <div class="form-card">
                 <form method="post" class="form-container">
+                    <div asp-validation-summary="ModelOnly" class="validation-summary"></div>
+
                     <label class="flex flex-col">
                         <p class="form-label">Nombre del sitio</p>
-                        <input asp-for="InstancesModel.SiteName"
+                        <input asp-for="Input.SiteName"
                                class="form-input"
                                placeholder="Mi sitio WordPress"
                                type="text"/>
-                        <span asp-validation-for="InstancesModel.SiteName" class="validation-error"></span>
+                        <span asp-validation-for="Input.SiteName" class="validation-error"></span>
                     </label>
 
                     <label class="flex flex-col">
-                        <p class="form-label">Dirección del Sitio</p>
+                        <p class="form-label">Dirección del sitio</p>
                         <div class="input-group">
-                            <input asp-for="InstancesModel.SiteAddress"
+                            <input asp-for="Input.SiteAddress"
                                    class="input-group-input"
-                                   placeholder="Introduzca la dirección de tu sitio"/>
+                                   placeholder="Introduce la dirección de tu sitio"/>
                             <div class="input-group-suffix">
                                 <span style="font-size: 16px;">flowpress.site</span>
                             </div>
                         </div>
-                        <span asp-validation-for="InstancesModel.SiteAddress" class="validation-error"></span>
+                        <span asp-validation-for="Input.SiteAddress" class="validation-error"></span>
                     </label>
+
+                    <div class="form-section">
+                        <h2 class="section-title">Administrador de WordPress</h2>
+                        <p class="section-description">Estos datos se usarán para completar la instalación automáticamente.</p>
+                    </div>
+
+                    <label class="flex flex-col">
+                        <p class="form-label">Usuario administrador</p>
+                        <input asp-for="Input.AdminUser"
+                               class="form-input"
+                               placeholder="admin"
+                               type="text"/>
+                        <span asp-validation-for="Input.AdminUser" class="validation-error"></span>
+                    </label>
+
+                    <label class="flex flex-col">
+                        <p class="form-label">Correo electrónico del administrador</p>
+                        <input asp-for="Input.AdminEmail"
+                               class="form-input"
+                               placeholder="tu@correo.com"
+                               type="email"/>
+                        <span asp-validation-for="Input.AdminEmail" class="validation-error"></span>
+                    </label>
+
+                    <label class="flex flex-col">
+                        <p class="form-label">Contraseña del administrador</p>
+                        <input asp-for="Input.AdminPassword"
+                               class="form-input"
+                               placeholder="Mínimo 12 caracteres"
+                               type="password"
+                               autocomplete="new-password"/>
+                        <span asp-validation-for="Input.AdminPassword" class="validation-error"></span>
+                    </label>
+
+                    <label class="flex flex-col">
+                        <p class="form-label">Confirmar contraseña</p>
+                        <input asp-for="Input.ConfirmAdminPassword"
+                               class="form-input"
+                               placeholder="Repite la contraseña"
+                               type="password"
+                               autocomplete="new-password"/>
+                        <span asp-validation-for="Input.ConfirmAdminPassword" class="validation-error"></span>
+                    </label>
+
                     <div style="padding-top: 1rem;">
                         <button type="submit" class="btn-submit">Lanzar Sitio</button>
                     </div>
