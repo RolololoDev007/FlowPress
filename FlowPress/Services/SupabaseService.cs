@@ -139,6 +139,8 @@ namespace FlowPress.Services
         /// Devuelve las instancias asociadas al usuario autenticado.
         public async Task<List<InstancesModel>> SelectInstancesAsync()
         {
+            await EnsureInitializedAsync();
+
             // Hacemos una llamada al HttpContext para que nos devuelva
             // el ID del usuario autenticado, que posteriormente necesitaremos
             // para poder hacer el filtro del select y que solo nos muestre 
@@ -199,6 +201,8 @@ namespace FlowPress.Services
         /// lo devolvera para a continuación hacer una comprobación
         public async Task<InstancesModel?> SelectInstancesSiteAddressAsync(string siteAddressToCheck)
         {
+            await EnsureInitializedAsync();
+
             // Obtener los registros de la instancia
             var result = await _client
                 .From<InstancesModel>()
@@ -249,6 +253,27 @@ namespace FlowPress.Services
                     .From<InstancesModel>()
                     .Where(x => x.Id == id)
                     .Set(x => x.DockerStatus, status)
+                    .Update();
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return false;
+            }
+        }
+
+        public async Task<bool> UpdateProvisioningStatusAsync(Guid id, string provisioningStatus)
+        {
+            try
+            {
+                await EnsureInitializedAsync();
+
+                await _client
+                    .From<InstancesModel>()
+                    .Where(x => x.Id == id)
+                    .Set(x => x.ProvisioningStatus, provisioningStatus)
                     .Update();
 
                 return true;

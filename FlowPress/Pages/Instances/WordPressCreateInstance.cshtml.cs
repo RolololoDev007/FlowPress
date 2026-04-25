@@ -9,30 +9,33 @@ using Supabase.Postgrest.Exceptions;
 namespace FlowPress.Pages.Instances;
 
 [Authorize]
-public class WordPressCreateInstance(SupabaseService supabaseService) : PageModel
+public class WordPressCreateInstance(
+    SupabaseService supabaseService,
+    WordPressProvisioningService provisioningService) : PageModel
 {
-    [BindProperty] public InstancesModel InstancesModel { get; set; } = new();
+    [BindProperty] public CreateInstanceInputModel Input { get; set; } = new();
 
     public void OnGet()
     {
+        Input.AdminEmail = User.FindFirstValue(ClaimTypes.Name) ?? string.Empty;
+        Input.AdminUser = User.FindFirstValue("username") ?? string.Empty;
     }
 
-    public async Task<IActionResult> OnPostAsync()
+    public async Task<IActionResult> OnPostAsync(CancellationToken cancellationToken)
     {
         if (!ModelState.IsValid)
             return Page();
 
-        // Verificar si el SiteAddress ya existe
-        var siteAddressToCheck = InstancesModel.SiteAddress.ToLower() + ".flowpress.site";
+        var normalizedSubdomain = Input.SiteAddress.Trim().ToLowerInvariant();
+        var siteAddressToCheck = normalizedSubdomain + ".flowpress.site";
         var existingInstances = await supabaseService.SelectInstancesSiteAddressAsync(siteAddressToCheck);
 
         if (existingInstances != null)
         {
-            ModelState.AddModelError("InstancesModel.SiteAddress",
-                "Esta dirección ya está en uso.");
+            ModelState.AddModelError("Input.SiteAddress", "Esta dirección ya está en uso.");
             return Page();
         }
-        // Obtener el UserId desde los claims
+
         var userId = User.FindFirstValue("userid");
 
         if (string.IsNullOrEmpty(userId))
@@ -40,7 +43,8 @@ public class WordPressCreateInstance(SupabaseService supabaseService) : PageMode
 
         try
         {
-            var instanceId = await CrearInstancia(userId);
+            var instanceId = await CrearInstancia(userId, normalizedSubdomain);
+            await provisioningService.ProvisionAsync(instanceId, Input.AdminPassword, cancellationToken);
             return RedirectToPage("WordPressInstanceInfo", new { id = instanceId });
         }
         catch (PostgrestException)
@@ -48,21 +52,27 @@ public class WordPressCreateInstance(SupabaseService supabaseService) : PageMode
             ModelState.AddModelError(string.Empty, "Ha ocurrido un error al crear la instancia.");
             return Page();
         }
+        catch (Exception ex)
+        {
+            ModelState.AddModelError(string.Empty, $"La instancia se creó, pero falló el aprovisionamiento automático: {ex.Message}");
+            return Page();
+        }
     }
 
-    private async Task<Guid> CrearInstancia(string userId)
+    private async Task<Guid> CrearInstancia(string userId, string normalizedSubdomain)
     {
-        var instancia = new InstancesModel()
+        var instancia = new InstancesModel
         {
             IdUser = userId,
-            SiteName = InstancesModel.SiteName,
-            SiteAddress = InstancesModel.SiteAddress.ToLower() + ".flowpress.site",
-            DockerStatus = "pending"
+            SiteName = Input.SiteName.Trim(),
+            SiteAddress = normalizedSubdomain + ".flowpress.site",
+            WpAdminUser = Input.AdminUser.Trim(),
+            WpAdminEmail = Input.AdminEmail.Trim(),
+            DockerStatus = "pending",
+            ProvisioningStatus = "pending"
         };
 
         await supabaseService.InsertAsync(instancia);
-        // INFO
-        /// Recogemos el id de la instancia creada para luego poder hacer el redireccionamiento
         return instancia.Id;
     }
 }
