@@ -53,8 +53,6 @@ FlowPress/
 
 ## Ventanas del sistema y capturas
 
-> Guarda las imágenes en `docs/screenshots/` con estos nombres para que se vean automáticamente en GitHub.
-
 ### 1) Inicio (`/`)
 Pantalla de bienvenida con resumen de capacidades y accesos rápidos a gestión y creación de instancias.
 
