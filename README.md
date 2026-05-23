@@ -96,14 +96,39 @@ Vista operativa con:
 
 ### Variables/configuración
 
-El proyecto usa claves en `appsettings.json` y `appsettings.Development.json` dentro de la sección `Supabase`.
+El proyecto usa configuración sensible en estos archivos:
+
+- `FlowPress/appsettings.json`
+- `FlowPress/appsettings.Development.json`
+- `Worker/appsettings.json`
+
+Debes reemplazar los placeholders `YOUR_*` por tus valores reales antes de ejecutar.
 
 Ejemplo:
 
 ```json
 "Supabase": {
-  "Url": "http://tu-supabase:8000",
-  "Key": "tu-service-role-o-anon-key"
+  "Url": "http://YOUR_SUPABASE_HOST:8000",
+  "Key": "YOUR_SUPABASE_API_KEY"
+}
+```
+
+También debes configurar:
+
+```json
+"RemoteDocker": {
+  "Host": "YOUR_DOCKER_HOST",
+  "Port": 22,
+  "User": "YOUR_DOCKER_USER",
+  "SshKeyPath": "~/.ssh/YOUR_PRIVATE_KEY"
+}
+```
+
+Y en el Worker:
+
+```json
+"ConnectionStrings": {
+  "SupabaseDb": "Host=YOUR_DB_HOST;Port=5432;Database=postgres;Username=YOUR_DB_USER;Password=YOUR_DB_PASSWORD"
 }
 ```
 
