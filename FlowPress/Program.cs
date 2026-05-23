@@ -9,6 +9,8 @@ builder.Services.AddHttpClient();
 
 // Servicios
 builder.Services.AddScoped<SupabaseService>();
+builder.Services.AddScoped<RemoteDockerService>();
+builder.Services.AddScoped<WordPressProvisioningService>();
 
 // INFO Configuración de autenticación con cookies
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)

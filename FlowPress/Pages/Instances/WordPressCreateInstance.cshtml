@@ -14,41 +14,94 @@
     <div class="create-content">
         <div class="create-wrapper">
             <div class="breadcrumb">
-                <a class="breadcrumb-link" href="/instances">Instances</a>
+                <a class="breadcrumb-link" href="/instances">Instancias</a>
                 <span class="breadcrumb-link">/</span>
                 <span class="breadcrumb-current">Crear nuevo sitio</span>
             </div>
 
             <div class="page-header">
                 <h1 class="page-title">Lanza una Nueva Instancia de WordPress</h1>
-                <p class="page-subtitle">Rellena los detalles a continuación para poner en marcha tu nuevo sitio.</p>
+                <p class="page-subtitle">Configura el sitio y la cuenta administradora para que WordPress quede listo nada más terminar el despliegue.</p>
             </div>
 
             <div class="form-card">
                 <form method="post" class="form-container">
+                    <div asp-validation-summary="ModelOnly" class="validation-summary"></div>
+
                     <label class="flex flex-col">
-                        <p class="form-label">Nombre del sitio</p>
-                        <input asp-for="InstancesModel.SiteName"
+                        <span class="form-label">Nombre del sitio</span>
+                        <input asp-for="Input.SiteName"
                                class="form-input"
                                placeholder="Mi sitio WordPress"
                                type="text"/>
-                        <span asp-validation-for="InstancesModel.SiteName" class="validation-error"></span>
+                        <span asp-validation-for="Input.SiteName" class="validation-error"></span>
                     </label>
 
                     <label class="flex flex-col">
-                        <p class="form-label">Dirección del Sitio</p>
+                        <span class="form-label">Dirección del sitio</span>
                         <div class="input-group">
-                            <input asp-for="InstancesModel.SiteAddress"
+                            <input asp-for="Input.SiteAddress"
                                    class="input-group-input"
-                                   placeholder="Introduzca la dirección de tu sitio"/>
+                                   placeholder="mi-sitio"
+                                   autocapitalize="none"
+                                   autocomplete="off"
+                                   spellcheck="false"/>
                             <div class="input-group-suffix">
-                                <span style="font-size: 16px;">flowpress.site</span>
+                                <span>flowpress.site</span>
                             </div>
                         </div>
-                        <span asp-validation-for="InstancesModel.SiteAddress" class="validation-error"></span>
+                        <span asp-validation-for="Input.SiteAddress" class="validation-error"></span>
+                        <span class="field-hint">Usa solo letras minúsculas, números y guiones.</span>
                     </label>
-                    <div style="padding-top: 1rem;">
-                        <button type="submit" class="btn-submit">Lanzar Sitio</button>
+
+                    <div class="form-section">
+                        <h2 class="section-title">Administrador de WordPress</h2>
+                        <p class="section-description">Estos datos se usarán para completar la instalación automáticamente y darte acceso al panel.</p>
+                    </div>
+
+                    <label class="flex flex-col">
+                        <span class="form-label">Usuario administrador</span>
+                        <input asp-for="Input.AdminUser"
+                               class="form-input"
+                               placeholder="admin"
+                               type="text"
+                               autocomplete="username"/>
+                        <span asp-validation-for="Input.AdminUser" class="validation-error"></span>
+                    </label>
+
+                    <label class="flex flex-col">
+                        <span class="form-label">Correo electrónico del administrador</span>
+                        <input asp-for="Input.AdminEmail"
+                               class="form-input"
+                               placeholder="tu@correo.com"
+                               type="email"
+                               autocomplete="email"/>
+                        <span asp-validation-for="Input.AdminEmail" class="validation-error"></span>
+                    </label>
+
+                    <label class="flex flex-col">
+                        <span class="form-label">Contraseña del administrador</span>
+                        <input asp-for="Input.AdminPassword"
+                               class="form-input"
+                               placeholder="Mínimo 12 caracteres"
+                               type="password"
+                               autocomplete="new-password"/>
+                        <span asp-validation-for="Input.AdminPassword" class="validation-error"></span>
+                        <span class="field-hint">Guárdala bien. La necesitarás para entrar a `/wp-admin`.</span>
+                    </label>
+
+                    <label class="flex flex-col">
+                        <span class="form-label">Confirmar contraseña</span>
+                        <input asp-for="Input.ConfirmAdminPassword"
+                               class="form-input"
+                               placeholder="Repite la contraseña"
+                               type="password"
+                               autocomplete="new-password"/>
+                        <span asp-validation-for="Input.ConfirmAdminPassword" class="validation-error"></span>
+                    </label>
+
+                    <div class="submit-row">
+                        <button type="submit" class="btn-submit">Lanzar sitio</button>
                     </div>
                 </form>
             </div>
